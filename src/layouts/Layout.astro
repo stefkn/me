@@ -5,6 +5,8 @@ import { ViewTransitions } from "astro:transitions";
 import siteConfig from "../site-config";
 import "../styles/global.css";
 
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
 // define types
 export type Props = {
 	title?: string;
@@ -67,12 +69,12 @@ function formatCanonicalURL(url: string | URL) {
 		/>
 
 		<!-- Low Priority Global Metadata -->
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<link rel="sitemap" href="/sitemap-index.xml" />
+		<link rel="icon" type="image/png" href={base + "favicon.png"} />
+		<link rel="sitemap" href={base + "sitemap-index.xml"} />
 		<link
 			rel="alternate"
 			type="application/rss+xml"
-			href="/rss.xml"
+			href={base + "rss.xml"}
 			title="RSS"
 		/>
 
@@ -141,14 +143,14 @@ function formatCanonicalURL(url: string | URL) {
 	</head>
 
 	<body>
-		<a id="main-icon-link" href="/">
-			<img id="site-icon" src="/favicon.png" />
+		<a id="main-icon-link" href={base}>
+			<img id="site-icon" src={base + "favicon.png"} />
 		</a>
 		<div class="navmenu-container" id="nav-menu">
 			<div>
 				<div id="top-nav-links" class="nav-links">
-					<a href="/work" class="nav-link">work</a>
-					<a href="/posts" class="nav-link">posts</a>
+					<a href={base + "work"} class="nav-link">work</a>
+					<a href={base + "posts"} class="nav-link">posts</a>
 				</div>
 			</div>
 			<ThemeToggle class="theme-toggle-container" />

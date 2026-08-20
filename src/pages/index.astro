@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import IndexBackground from "../components/IndexBackground.astro";
 import RecentPosts from "../components/RecentPosts.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 ---
 
 <Layout title="Introduction">
@@ -67,10 +69,10 @@ import RecentPosts from "../components/RecentPosts.astro";
 					Expect to find a mix of blog posts, project
 					write-ups, and other random musings. If you're looking to
 					hire a software engineer, you can check out the <a
-						href="/work">work</a
+						href={base + "work"}>work</a
 					> page for more information about me, and to see if I might be
 					a good fit for your team. For now, you can read all my rambling
-					over on the <a href="/posts">posts</a> page, or see some of my
+					over on the <a href={base + "posts"}>posts</a> page, or see some of my
 					recent posts below.
 				</p>
 				<RecentPosts />

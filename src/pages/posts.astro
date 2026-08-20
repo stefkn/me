@@ -5,6 +5,8 @@ import { getCollection } from "astro:content";
 const allPosts = await getCollection("posts");
 const featuredPost = allPosts.find((post) => post.data.featured);
 const pageTitle = "Blog posts";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 ---
 
 <Layout title={pageTitle}>
@@ -19,7 +21,7 @@ const pageTitle = "Blog posts";
 						<div class="featured-post-label">
 							Featured post
 						</div>
-						<a href={`/posts/${featuredPost.slug}/`}>
+						<a href={`${base}posts/${featuredPost.slug}/`}>
 							{featuredPost.data.title}
 						</a>
 						<p>{featuredPost.data.description}</p>
@@ -28,7 +30,7 @@ const pageTitle = "Blog posts";
 						</p>
 					</div>
 					<div class="article-image">
-						<a href={`/posts/${featuredPost.slug}/`}>
+						<a href={`${base}posts/${featuredPost.slug}/`}>
 							<Image
 								src={featuredPost.data.image}
 								alt={featuredPost.data.imageAlt}
@@ -45,14 +47,14 @@ const pageTitle = "Blog posts";
 			allPosts && allPosts.filter((post) => {return post !== featuredPost}).map((post) => (
 				<div class="article-post">
 					<div class="post-details">
-						<a href={`/posts/${post.slug}/`}>{post.data.title}</a>
+						<a href={`${base}posts/${post.slug}/`}>{post.data.title}</a>
 						<p>{post.data.description}</p>
 						<p class="post-date">
 							{post.data.pubDate.toDateString()}
 						</p>
 					</div>
 					<div class="article-image">
-						<a href={`/posts/${post.slug}/`}>
+						<a href={`${base}posts/${post.slug}/`}>
 							<Image
 								src={post.data.image}
 								alt={post.data.imageAlt}

@@ -1,3 +1,7 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+---
+
 <footer class="footer">
     <div id="footer-bg">
         <svg class="dots" width="100%" height="100%">
@@ -29,8 +33,8 @@
         </svg>
     </div>
     <div class="footer-content">
-        <a href="/" id="home-link">
-            <img id="site-icon" src="/favicon.png" />
+        <a href={base} id="home-link">
+            <img id="site-icon" src={base + "favicon.png"} />
         </a>
         <div class="flex">
             <h2 id="footer-title">stefkn.com</h2>
