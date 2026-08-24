@@ -1,0 +1,74 @@
+name: Deploy PR previews
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+# One preview deployment per PR at a time.
+concurrency: preview-${{ github.event.number }}
+
+jobs:
+  build:
+    # Fork PRs don't have a write-capable GITHUB_TOKEN, so skip them.
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Don't persist credentials on the runner that executes PR code.
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install and build
+        env:
+          ASTRO_BASE: /me/pr-preview/pr-${{ github.event.number }}
+        run: |
+          npm ci
+          npx astro build
+
+      - name: Upload preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-${{ github.event.number }}
+          path: dist
+          retention-days: 1
+
+  deploy:
+    if: ${{ always() && github.event.pull_request.head.repo.full_name == github.repository && (github.event.action == 'closed' || needs.build.result == 'success') }}
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      pages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download preview
+        if: github.event.action != 'closed'
+        uses: actions/download-artifact@v4
+        with:
+          name: preview-${{ github.event.number }}
+          path: dist
+
+      - name: Deploy preview
+        uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 # v1
+        with:
+          source-dir: dist
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
+          wait-for-pages-deployment: true
