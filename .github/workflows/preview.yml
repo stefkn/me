@@ -13,9 +13,10 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  pages: read
 
 # One preview deployment per PR at a time.
-concurrency: preview-${{ github.ref }}
+concurrency: preview-${{ github.event.number }}
 
 jobs:
   deploy-preview:
