@@ -85,12 +85,6 @@
         line-height: 1;
         letter-spacing: 0.01px;
     }
-    #background.playing {
-        touch-action: none;
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
     .background {
         position: fixed;
         z-index: -1;
@@ -99,14 +93,37 @@
     }
     @media screen and (max-width: 700px) {
         .background {
-            top: 12rem;
+            top: 10rem;
             right: 0px;
+            left: 0px;
+        }
+        pre.background-ascii {
+            display: none;
         }
         .screen-content {
             top: 0rem;
             left: 0rem;
-            width: auto;
+            width: 100%;
             height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .on-screen-text {
+            position: static;
+            height: auto;
+            font-size: 1rem;
+            transform: none;
+            -webkit-transform: none;
+        }
+        #game {
+            position: static;
+            width: auto;
+            font-size: 1rem;
+            transform: none;
+            -webkit-transform: none;
+            letter-spacing: 0;
         }
     }
     @media screen and (min-width: 1200px) {
