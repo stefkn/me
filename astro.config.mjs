@@ -5,7 +5,7 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://stefkn.github.io',
-  base: process.env.ASTRO_BASE ?? '/personal-site',
+  base: process.env.ASTRO_BASE ?? '/me',
   prefetch: {
     prefetchAll: true
   },
