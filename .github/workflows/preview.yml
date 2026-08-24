@@ -19,6 +19,8 @@ concurrency: preview-${{ github.ref }}
 
 jobs:
   deploy-preview:
+    # Fork PRs don't have a write-capable GITHUB_TOKEN, so skip them.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,4 +48,3 @@ jobs:
           umbrella-dir: pr-preview
           action: auto
           wait-for-pages-deployment: true
-          qr-code: true
