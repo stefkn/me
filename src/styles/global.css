@@ -148,7 +148,8 @@ main.wrapper>.full-bleed {
 .nav-links {
   position: relative;
   left: 1rem;
-  top: -0.2rem;
+  display: flex;
+  align-items: center;
   font-size: var(--text-lg);
 
   a {
