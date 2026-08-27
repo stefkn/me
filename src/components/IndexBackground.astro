@@ -1,4 +1,5 @@
 <div id="background" class="background">
+    <div class="scene">
     <pre
         class="background-ascii">
                                                          .,,uod8B8bou,,.
@@ -42,6 +43,7 @@
         <p id="screentext" class="on-screen-text">hello world</p>
         <p id="screentext2" class="on-screen-text"> press 'g' to play</p>
         <span id="game"></span>
+    </div>
     </div>
 </div>
 
@@ -92,35 +94,17 @@
     }
     @media screen and (max-width: 700px) {
         .background {
-            top: 10rem;
+            top: 8rem;
             right: 0px;
             left: 0px;
-        }
-        pre.background-ascii {
-            display: none;
-        }
-        .screen-content {
-            top: 0rem;
-            left: 0rem;
-            width: 100%;
-            height: auto;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.75rem;
+            justify-content: center;
+        }
+        .scene {
+            transform-origin: top center;
         }
         .on-screen-text {
-            position: static;
-            height: auto;
             font-size: 1rem;
-            transform: none;
-            -webkit-transform: none;
-        }
-        #game {
-            position: static;
-            font-size: 1rem;
-            transform: none;
-            -webkit-transform: none;
         }
     }
     @media screen and (min-width: 1200px) {
@@ -390,4 +374,24 @@
     document.addEventListener("astro:page-load", bindControls);
 
     bindControls();
+
+    function fitScene() {
+        const scene = document.querySelector<HTMLElement>(".scene");
+        const pre = document.querySelector<HTMLElement>("pre.background-ascii");
+        if (!scene || !pre) return;
+
+        scene.style.transform = "";
+
+        if (!window.matchMedia("(max-width: 700px)").matches) return;
+
+        const vw = document.documentElement.clientWidth;
+        const width = pre.getBoundingClientRect().width;
+        const scale = Math.min(1, (vw - 16) / width);
+        scene.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener("resize", fitScene);
+    document.addEventListener("astro:page-load", fitScene);
+
+    fitScene();
 </script>
