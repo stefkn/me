@@ -81,9 +81,8 @@
         position: absolute;
         transform: skew(0deg, -15deg);
         -webkit-transform: skew(0deg, -15deg);
-        width: 90px;
+        white-space: pre;
         line-height: 1;
-        letter-spacing: 0.01px;
     }
     .background {
         position: fixed;
@@ -119,11 +118,9 @@
         }
         #game {
             position: static;
-            width: auto;
             font-size: 1rem;
             transform: none;
             -webkit-transform: none;
-            letter-spacing: 0;
         }
     }
     @media screen and (min-width: 1200px) {
@@ -153,6 +150,18 @@
 
     function makeGrid() {
         return lineText.repeat(4) + hintRow + lineText.repeat(4);
+    }
+
+    const COLS = 19;
+    const ROWS = 9;
+
+    function renderGame() {
+        const { gameElem } = getElements();
+        const rows: Array<string> = [];
+        for (let r = 0; r < ROWS; r++) {
+            rows.push(grid.slice(r * COLS, (r + 1) * COLS));
+        }
+        gameElem!.textContent = rows.join("\n");
     }
 
     function getElements() {
@@ -254,6 +263,8 @@
         snakeSpeed = 600;
         currentDirectionKey = "";
 
+        renderGame();
+
         document.getElementById("background")?.classList.add("playing");
     }
 
@@ -274,18 +285,20 @@
         const currSnake = posArr.reverse().slice(0, snakeLen + 1);
 
         currSnake.forEach((pos) => {
-            gameElem!.innerHTML = setCharAt(grid, pos, snake);
+            setCharAt(grid, pos, snake);
         });
-        gameElem!.innerHTML = setCharAt(grid, foodPosition, food);
+        setCharAt(grid, foodPosition, food);
 
         if (foodPosition === position) {
             posArr.push(position);
-            gameElem!.innerHTML = setCharAt(grid, foodPosition, snake);
+            setCharAt(grid, foodPosition, snake);
             snakeLen++;
             snakeSpeed = snakeSpeed / 1.1;
             foodPosition = getNewFoodPos();
-            gameElem!.innerHTML = setCharAt(grid, foodPosition, food);
+            setCharAt(grid, foodPosition, food);
         }
+
+        renderGame();
 
         if (
             gameStarted &&
