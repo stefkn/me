@@ -2,24 +2,29 @@
 import Layout from "../layouts/Layout.astro";
 import IndexBackground from "../components/IndexBackground.astro";
 import RecentPosts from "../components/RecentPosts.astro";
+import siteConfig from "../site-config";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
+const domain = siteConfig.domain;
+const wordmark = domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+const wordmarkMain = wordmark.slice(0, wordmark.indexOf("."));
+const wordmarkSuffix = wordmark.slice(wordmark.indexOf("."));
 ---
 
 <Layout title="Introduction">
 	<div class="big-text-container">
 		<h1 id="big-text" class="index-header ibm-plex-sans-regular">
-			stefkn
+			{wordmarkMain}
 		</h1>
 		<h1 id="big-text-2" class="index-header ibm-plex-sans-regular">
-			.com
+			{wordmarkSuffix}
 		</h1>
 	</div>
 	<div id="background" class="background">
 		<IndexBackground />
 		<div class="index-card">
 			<div class="index-card-contents">
-				<h2>stefkn.com</h2>
 				<h1>this is stefan's personal website</h1>
 				<h4>
 					👨‍🏭 stefan is a software engineer with almost a decade of
@@ -48,8 +53,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 		display: block;
 		text-align: left;
 		margin: 0rem 0rem 0rem -4rem;
-		font-size: 32rem;
+		font-size: 72rem;
 		position: fixed;
+		white-space: nowrap;
 	}
 	.index-card {
 		display: flex;
@@ -120,10 +126,10 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 		color: #0800ff;
 	}
 	#big-text-2 {
-		letter-spacing: -29px;
+		letter-spacing: -0.02em;
 		margin: 8rem 0rem 0rem -2rem;
 		font-weight: 400;
-		font-size: 42rem;
+		font-size: clamp(2.5rem, 10vw, 12rem);
 		font-style: italic;
 	}
 </style>

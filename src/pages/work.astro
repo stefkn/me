@@ -45,10 +45,10 @@ const pageTitle = "Résumé/CV";
 				class="cv-image"
 				onload="this.style.opacity=1; this.style.filter='saturate(1.05)'"
 				quality="low"
-				onclick=`window.location="https://docs.google.com/presentation/d/1MhmKj8wS_Q18ItPdRWYEBbGBefBPNjM1YtI5HjcE8sc/edit?usp=sharing"`
+				onclick=`window.location="https://docs.google.com/presentation/d/17DqKnTw6O60B9ycDUaiPnrLB5iLsREHoJxvHP7KKiA4/edit?usp=sharing"`
 			/>
 			<a
-				href="https://docs.google.com/presentation/d/1MhmKj8wS_Q18ItPdRWYEBbGBefBPNjM1YtI5HjcE8sc/edit?usp=sharing"
+				href="https://docs.google.com/presentation/d/17DqKnTw6O60B9ycDUaiPnrLB5iLsREHoJxvHP7KKiA4/edit?usp=sharing"
 			>
 				view my CV here
 			</a>
@@ -470,11 +470,11 @@ const pageTitle = "Résumé/CV";
 		-ms-transition: all 1s ease;
 		-o-transition: all 1s ease;
 
-		background-color: #0037ff;
-		color: white;
+		background-color: var(--color-accent-strong);
+		color: var(--color-on-accent);
 		padding: 0.8rem 1.8rem;
 		border-radius: 12px;
-		font-size: 1.44rem;
+		font-size: var(--text-lg);
 		text-decoration: none;
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 		margin: 0rem 1rem 0rem -3rem;
@@ -564,7 +564,7 @@ const pageTitle = "Résumé/CV";
 		justify-content: flex-start;
 		margin-top: 2rem;
 		margin-left: -1rem;
-		font-size: 1rem;
+		font-size: var(--text-sm);
 	}
 	.skills-icons > li {
 		width: 5.2rem;
@@ -582,20 +582,20 @@ const pageTitle = "Résumé/CV";
 	}
 	section {
 		grid-column: span 1;
-		border-left: 1px #dddddd;
+		border-left: 1px var(--color-border);
 		border-left-style: solid;
 		padding-left: 40px;
 		padding-top: 20px;
 	}
 	h2 {
-		font-size: 2.2rem;
+		font-size: var(--text-lg);
 		margin-top: 2rem;
 		margin-bottom: 1rem;
 		font-weight: 600;
-		color: #305dff;
+		color: var(--color-accent);
 	}
 	h3 {
-		font-size: 1.3rem;
+		font-size: var(--text-lg);
 		margin-top: 2rem;
 		margin-bottom: 0.3rem;
 		font-weight: 300;
@@ -605,11 +605,11 @@ const pageTitle = "Résumé/CV";
 		margin-top: 0.8rem;
 	}
 	p > a {
-		font-size: 1.2rem;
+		font-size: var(--text-base);
 		font-weight: 800;
 	}
 	strong {
-		font-size: 1.42rem;
+		font-size: var(--text-lg);
 		font-weight: 600;
 		line-height: 0px;
 	}
@@ -620,7 +620,7 @@ const pageTitle = "Résumé/CV";
 		margin-top: 1.4rem;
 	}
 	.timeline-details > h3 {
-		font-size: 0.96rem;
+		font-size: var(--text-sm);
 		margin-top: 0;
 		margin-bottom: 0rem;
 		font-weight: 600;
@@ -631,7 +631,7 @@ const pageTitle = "Résumé/CV";
 	}
 	.timeline-details > i {
 		font-weight: 600;
-		color: #5e81ff;
+		color: var(--color-accent);
 	}
 	.stack {
 		display: flex;
@@ -645,7 +645,7 @@ const pageTitle = "Résumé/CV";
 		justify-content: flex-start;
 		margin-top: 1rem;
 		margin-left: -1rem;
-		font-size: 11px;
+		font-size: var(--text-xs);
 	}
 	.stack > li {
 		width: 5rem;
@@ -655,6 +655,6 @@ const pageTitle = "Résumé/CV";
 		height: 40px;
 	}
 	html.dark > body > main.wrapper.grid > section {
-		border-color: #6c6c6c;
+		border-color: var(--color-border);
 	}
 </style>
