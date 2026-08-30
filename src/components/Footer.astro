@@ -1,6 +1,7 @@
 ---
 import siteConfig from "../site-config";
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const displayDomain = siteConfig.domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
 ---
 
 <footer class="footer">
@@ -38,7 +39,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
             <img id="site-icon" src={base + "favicon.png"} />
         </a>
         <div class="flex">
-            <h2 id="footer-title">{siteConfig.domain}</h2>
+            <h2 id="footer-title">{displayDomain}</h2>
             <a href="https://github.com/stefkn">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
