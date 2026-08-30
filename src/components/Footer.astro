@@ -93,7 +93,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
         padding: 26px 50px;
         position: relative;
         margin-top: 6rem;
-        border-top: 1px solid #dddddd;
+        border-top: 1px solid var(--color-border);
 
         @media (max-width: 630px) {
             padding: 20px 20px;
@@ -133,15 +133,15 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     }
     .footer-text {
         letter-spacing: -0.2px;
-        font-size: 18px;
+        font-size: var(--text-base);
         margin-top: 0.6rem;
     }
     a.footer-text {
         text-decoration: underline;
-        color: #5361ff;
+        color: var(--color-accent);
     }
     .footer-quote {
-        font-size: 14px;
+        font-size: var(--text-sm);
         max-width: 14rem;
         font-style: italic;
         text-align: right;
@@ -152,7 +152,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 
     html.dark > body > footer {
         background-color: #00000000;
-        border-color: #6c6c6c;
+        border-color: var(--color-border);
     }
     html.dark > body > footer > #footer-bg {
     }
