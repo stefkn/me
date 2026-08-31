@@ -1,4 +1,5 @@
 <div id="background" class="background">
+    <div class="scene">
     <pre
         class="background-ascii">
                                                          .,,uod8B8bou,,.
@@ -39,9 +40,10 @@
                     *Bb.
     </pre>
     <div class="screen-content">
-        <p id="screentext" class="on-screen-text">hello world</p>
+        <p id="screentext" class="on-screen-text" style="display: none"></p>
         <p id="screentext2" class="on-screen-text"> press 'g' to play</p>
         <span id="game"></span>
+    </div>
     </div>
 </div>
 
@@ -81,9 +83,8 @@
         position: absolute;
         transform: skew(0deg, -15deg);
         -webkit-transform: skew(0deg, -15deg);
-        width: 90px;
+        white-space: pre;
         line-height: 1;
-        letter-spacing: 0.01px;
     }
     .background {
         position: fixed;
@@ -93,8 +94,17 @@
     }
     @media screen and (max-width: 700px) {
         .background {
-            top: 12rem;
+            top: 10rem;
             right: 0px;
+            left: 0px;
+            display: flex;
+            justify-content: center;
+        }
+        .scene {
+            transform-origin: top center;
+        }
+        .on-screen-text {
+            font-size: 1rem;
         }
     }
     @media screen and (min-width: 1200px) {
@@ -111,16 +121,43 @@
 </style>
 
 <script>
-    const gameElem = document.getElementById("game");
-    const screenText = document.getElementById("screentext");
-    const screenText2 = document.getElementById("screentext2");
-    const flashingBit = document.getElementById("flashing");
     const snake = "0";
     const food = ".";
     const lineText = "██████████████████ ";
 
+    const isTouchDevice =
+        "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const moveHint = isTouchDevice
+        ? ["SWIPE", "TO", "MOVE"]
+        : ["USE", "WASD", "TO", "MOVE"];
+    const hintRow = ("█" + moveHint.join("█") + "█").padEnd(18, "█") + " ";
+
+    function makeGrid() {
+        return lineText.repeat(4) + hintRow + lineText.repeat(4);
+    }
+
+    const COLS = 19;
+    const ROWS = 9;
+
+    function renderGame() {
+        const { gameElem } = getElements();
+        const rows: Array<string> = [];
+        for (let r = 0; r < ROWS; r++) {
+            rows.push(grid.slice(r * COLS, (r + 1) * COLS));
+        }
+        gameElem!.textContent = rows.join("\n");
+    }
+
+    function getElements() {
+        return {
+            gameElem: document.getElementById("game"),
+            screenText: document.getElementById("screentext"),
+            screenText2: document.getElementById("screentext2"),
+        };
+    }
+
     let gameStarted = false;
-    let grid = lineText.repeat(4) + "█USE█WASD█TO█MOVE█ " + lineText.repeat(4);
+    let grid = makeGrid();
     let position = 0;
     let posArr: Array<number> = [];
     let foodPosition = -1;
@@ -128,6 +165,9 @@
     let snakeSpeed = 600;
     let playerMoveInterval = null;
     let currentDirectionKey = "";
+
+    let touchStartX = 0;
+    let touchStartY = 0;
 
     function setCharAt(str: string, index: number, chr: string) {
         if (index > str.length - 1) return str;
@@ -187,59 +227,62 @@
         }
     }
 
-    function keyDownHandler(e: KeyboardEvent, user = true) {
-        if (e.key !== "g" && !gameStarted) {
-            return;
+    function startGame() {
+        const { gameElem, screenText, screenText2 } = getElements();
+
+        if (playerMoveInterval!) {
+            clearInterval(playerMoveInterval);
+            playerMoveInterval = null;
         }
 
-        if (!gameStarted) {
-            gameStarted = true;
-            foodPosition = getNewFoodPos();
-            screenText!.style.display = "none";
-            screenText2!.style.display = "none";
-            flashingBit!.style.display = "none";
-            gameElem!.style.display = "block";
-            grid =
-                lineText.repeat(4) + "█USE█WASD█TO█MOVE█ " + lineText.repeat(4);
-            posArr = [];
-            position = 0;
-            foodPosition = 0;
-            snakeLen = 12;
-            snakeSpeed = 600;
-        }
+        gameStarted = true;
+        screenText!.style.display = "none";
+        screenText2!.style.display = "none";
+        gameElem!.style.display = "block";
+        grid = makeGrid();
+        posArr = [];
+        position = 0;
+        foodPosition = 0;
+        snakeLen = 12;
+        snakeSpeed = 600;
+        currentDirectionKey = "";
 
-        if (currentDirectionKey === e.key && user) {
-            return;
-        }
+        renderGame();
+
+        document.getElementById("background")?.classList.add("playing");
+    }
+
+    function move(key: string, user = true) {
+        if (!gameStarted) return;
+
+        if (currentDirectionKey === key && user) return;
 
         if (playerMoveInterval!) {
             clearInterval(playerMoveInterval);
         }
 
-        playerMoveInterval = setInterval(
-            keyDownHandler,
-            snakeSpeed,
-            new KeyboardEvent("keydown", { key: e.key }),
-            false,
-        );
+        playerMoveInterval = setInterval(move, snakeSpeed, key, false);
 
-        handleDirectionKey(e.key);
+        handleDirectionKey(key);
 
+        const { gameElem, screenText, screenText2 } = getElements();
         const currSnake = posArr.reverse().slice(0, snakeLen + 1);
 
         currSnake.forEach((pos) => {
-            gameElem!.innerHTML = setCharAt(grid, pos, snake);
+            setCharAt(grid, pos, snake);
         });
-        gameElem!.innerHTML = setCharAt(grid, foodPosition, food);
+        setCharAt(grid, foodPosition, food);
 
         if (foodPosition === position) {
             posArr.push(position);
-            gameElem!.innerHTML = setCharAt(grid, foodPosition, snake);
+            setCharAt(grid, foodPosition, snake);
             snakeLen++;
             snakeSpeed = snakeSpeed / 1.1;
             foodPosition = getNewFoodPos();
-            gameElem!.innerHTML = setCharAt(grid, foodPosition, food);
+            setCharAt(grid, foodPosition, food);
         }
+
+        renderGame();
 
         if (
             gameStarted &&
@@ -250,16 +293,105 @@
             screenText!.innerHTML = "YOU LOSE :(";
             screenText!.style.display = "block";
             screenText2!.style.display = "block";
-            flashingBit!.style.display = "block";
+            if (playerMoveInterval!) {
+                clearInterval(playerMoveInterval);
+                playerMoveInterval = null;
+            }
             gameStarted = false;
+            document.getElementById("background")?.classList.remove("playing");
         }
     }
 
-    document.addEventListener("astro:page-load", () => {
-        if (window.location.pathname === "/") {
-            window.addEventListener("keydown", (e) => keyDownHandler(e));
+    function keyDownHandler(e: KeyboardEvent) {
+        if (e.key === "g" && !gameStarted) {
+            startGame();
+            return;
         }
-    });
+        if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
+            move(e.key);
+        }
+    }
 
-    window.addEventListener("keydown", (e) => keyDownHandler(e));
+    function onTouchStart(e: TouchEvent) {
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+    }
+
+    function onTouchMove(e: TouchEvent) {
+        if (gameStarted) {
+            e.preventDefault();
+        }
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+        const touch = e.changedTouches[0];
+        const dx = touch.clientX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+        const SWIPE_THRESHOLD = 24;
+
+        if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
+            if (!gameStarted) {
+                startGame();
+            }
+            return;
+        }
+
+        if (!gameStarted) return;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            move(dx > 0 ? "d" : "a");
+        } else {
+            move(dy > 0 ? "s" : "w");
+        }
+    }
+
+    let boundBg: HTMLElement | null = null;
+
+    function bindControls() {
+        const bg = document.getElementById("background");
+        const prompt = document.getElementById("screentext2");
+
+        if (prompt) {
+            prompt.innerHTML = isTouchDevice ? " tap to play" : " press 'g' to play";
+        }
+
+        if (bg && bg !== boundBg) {
+            if (boundBg) {
+                boundBg.removeEventListener("touchstart", onTouchStart);
+                boundBg.removeEventListener("touchmove", onTouchMove);
+                boundBg.removeEventListener("touchend", onTouchEnd);
+            }
+            bg.addEventListener("touchstart", onTouchStart, { passive: false });
+            bg.addEventListener("touchmove", onTouchMove, { passive: false });
+            bg.addEventListener("touchend", onTouchEnd, { passive: false });
+            boundBg = bg;
+        }
+    }
+
+    window.addEventListener("keydown", keyDownHandler);
+
+    document.addEventListener("astro:page-load", bindControls);
+
+    bindControls();
+
+    function fitScene() {
+        const scene = document.querySelector<HTMLElement>(".scene");
+        const pre = document.querySelector<HTMLElement>("pre.background-ascii");
+        if (!scene || !pre) return;
+
+        scene.style.transform = "";
+
+        if (!window.matchMedia("(max-width: 700px)").matches) return;
+
+        const vw = document.documentElement.clientWidth;
+        const width = pre.getBoundingClientRect().width;
+        const scale = Math.min(1, (vw - 16) / width);
+        scene.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener("resize", fitScene);
+    document.addEventListener("astro:page-load", fitScene);
+
+    fitScene();
 </script>

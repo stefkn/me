@@ -43,6 +43,14 @@
   transform: translateX(-100px);
 }
 
+/* While the snake game is running, block scroll/zoom so swipes steer it. */
+#background.playing {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .index-intro-image,
 .work-intro-image {
   -webkit-transition: all 3s ease;
@@ -140,7 +148,8 @@ main.wrapper>.full-bleed {
 .nav-links {
   position: relative;
   left: 1rem;
-  top: -0.2rem;
+  display: flex;
+  align-items: center;
   font-size: var(--text-lg);
 
   a {
