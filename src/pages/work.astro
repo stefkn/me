@@ -10,6 +10,11 @@ import tailsLogo from "../assets/tails_logo.png";
 import krakenLogo from "../assets/krakentech_logo.svg";
 import tentacleImage from "../assets/tentacle-xl.png";
 import kclLogo from "../assets/kcl_logo.svg";
+import milkfeedAppImage from "../assets/milkfeed-app.png";
+import milkfeedNightModeImage from "../assets/milkfeed-nightmode.png";
+import milkfeedSharedSessionImage from "../assets/milkfeed-shared-session.png";
+import perspectiveDesktopImage from "../assets/perspective-desktop.png";
+import perspectiveMobileImage from "../assets/perspective-mobile.png";
 
 import {
 	programmingLanguages,
@@ -389,12 +394,46 @@ const pageTitle = "Résumé/CV";
 			<h2 class="animated">side projects</h2>
 			<h3>milkfeed</h3>
 			<p>
-				A minimalistic baby feed-tracking app. 
+				A minimalistic baby feed-tracking app.
 			</p>
+			<div class="project-screenshots">
+				<button class="project-screenshot-button" type="button">
+					<Image
+						src={milkfeedAppImage}
+						alt="Milkfeed feed-tracking dashboard"
+					/>
+				</button>
+				<button class="project-screenshot-button" type="button">
+					<Image
+						src={milkfeedNightModeImage}
+						alt="Milkfeed dashboard in night mode"
+					/>
+				</button>
+				<button class="project-screenshot-button" type="button">
+					<Image
+						src={milkfeedSharedSessionImage}
+						alt="Milkfeed shared-session invitation screen"
+					/>
+				</button>
+			</div>
 			<h3>perspective</h3>
 			<p>
-				A simple timeline for putting historical events in perspective. 
+				A simple timeline for putting historical events in perspective.
 			</p>
+			<div class="project-screenshots project-screenshots--perspective">
+				<button class="project-screenshot-button" type="button">
+					<Image
+						src={perspectiveDesktopImage}
+						alt="Perspective timeline on a desktop display"
+					/>
+				</button>
+				<button class="project-screenshot-button" type="button">
+					<Image
+						src={perspectiveMobileImage}
+						alt="Perspective timeline on a mobile display"
+					/>
+				</button>
+			</div>
 			<h3>genetictactoe</h3>
 			<p>
 				Naughts and Crosses, using genetic algorithms. 
@@ -413,6 +452,12 @@ const pageTitle = "Résumé/CV";
 			</p>
 		</section>
 	</main>
+	<dialog class="screenshot-dialog" aria-label="Expanded project screenshot">
+		<button class="screenshot-dialog-close" type="button" aria-label="Close image">
+			Close
+		</button>
+		<img class="screenshot-dialog-image" alt="" />
+	</dialog>
 </Layout>
 
 <script>
@@ -441,6 +486,33 @@ const pageTitle = "Résumé/CV";
 	});
 
 	setupAnimations();
+
+	function setupScreenshotZoom() {
+		const dialog = document.querySelector<HTMLDialogElement>(".screenshot-dialog");
+		const dialogImage = dialog?.querySelector<HTMLImageElement>(".screenshot-dialog-image");
+		const closeButton = dialog?.querySelector<HTMLButtonElement>(".screenshot-dialog-close");
+
+		if (!dialog || !dialogImage || !closeButton) return;
+
+		document.querySelectorAll<HTMLButtonElement>(".project-screenshot-button").forEach((button) => {
+			button.onclick = () => {
+				const image = button.querySelector<HTMLImageElement>("img");
+				if (!image) return;
+
+				dialogImage.src = image.currentSrc || image.src;
+				dialogImage.alt = image.alt;
+				dialog.showModal();
+			};
+		});
+
+		closeButton.onclick = () => dialog.close();
+		dialog.onclick = ({ target }) => {
+			if (target === dialog) dialog.close();
+		};
+	}
+
+	document.addEventListener("astro:page-load", setupScreenshotZoom);
+	setupScreenshotZoom();
 </script>
 
 <style>
@@ -672,6 +744,71 @@ const pageTitle = "Résumé/CV";
 	}
 	.stack > svg {
 		height: 40px;
+	}
+	.project-screenshots {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+		gap: 0.75rem;
+		margin-top: 1rem;
+	}
+	.project-screenshot-button {
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: zoom-in;
+	}
+	.project-screenshot-button:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+	.project-screenshots :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 6px;
+	}
+	.project-screenshots--perspective {
+		grid-template-columns: 1fr;
+	}
+	.project-screenshots--perspective .project-screenshot-button:last-child {
+		max-width: 240px;
+	}
+	.screenshot-dialog {
+		display: none;
+		inset: 0;
+		width: fit-content;
+		height: fit-content;
+		margin: auto;
+		place-items: center;
+		max-width: min(calc(100vw - 2rem), 1100px);
+		max-height: calc(100dvh - 2rem);
+		padding: 0;
+		border: 1px solid var(--color-border);
+		border-radius: 6px;
+		background: var(--color-background);
+	}
+	.screenshot-dialog[open] {
+		display: grid;
+	}
+	.screenshot-dialog::backdrop {
+		background: rgb(0 0 0 / 0.75);
+	}
+	.screenshot-dialog-image {
+		display: block;
+		max-width: min(calc(100vw - 2rem), 1100px);
+		max-height: calc(100dvh - 4rem);
+		object-fit: contain;
+	}
+	.screenshot-dialog-close {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		padding: 0.4rem 0.65rem;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		background: var(--color-background);
+		color: var(--color-text);
+		cursor: pointer;
 	}
 	html.dark > body > main.wrapper.grid > section {
 		border-color: var(--color-border);
