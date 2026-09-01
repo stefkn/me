@@ -159,6 +159,45 @@ function formatCanonicalURL(url: string | URL) {
 		<slot />
 
 		<Footer />
+
+		<script>
+			function initNavHideOnScroll() {
+				const navMenuElement = document.getElementById("nav-menu");
+				if (!navMenuElement || navMenuElement.dataset.scrollHideBound) return;
+				navMenuElement.dataset.scrollHideBound = "true";
+				const navMenu = navMenuElement;
+
+				const hideThreshold = 120;
+				let lastScrollY = window.scrollY;
+				let ticking = false;
+
+				function update() {
+					const currentScrollY = window.scrollY;
+					if (
+						currentScrollY > lastScrollY &&
+						currentScrollY > hideThreshold
+					) {
+						navMenu.classList.add("nav-menu-hidden");
+					} else {
+						navMenu.classList.remove("nav-menu-hidden");
+					}
+					lastScrollY = currentScrollY;
+					ticking = false;
+				}
+
+				function onScroll() {
+					if (!ticking) {
+						requestAnimationFrame(update);
+						ticking = true;
+					}
+				}
+
+				window.addEventListener("scroll", onScroll, { passive: true });
+			}
+
+			document.addEventListener("astro:page-load", initNavHideOnScroll);
+			initNavHideOnScroll();
+		</script>
 	</body><style>
 		#main-icon-link {
 			position: relative;
@@ -172,7 +211,8 @@ function formatCanonicalURL(url: string | URL) {
 			border: 1px solid #ffffff;
 		}
 		#nav-menu {
-			position: relative;
+			position: sticky;
+			top: 0;
 
 			display: flex;
 			justify-content: space-between;
@@ -180,10 +220,14 @@ function formatCanonicalURL(url: string | URL) {
 			max-width: 750px;
 			margin: auto;
 			z-index: 10;
+			transition: transform 0.3s ease;
+		}
+		#nav-menu.nav-menu-hidden {
+			transform: translateY(-120%);
 		}
 		.nav-link {
 			border: 1px solid var(--color-text);
-			margin: 0rem 0rem 0rem 0rem;
+			margin: 0rem 0.33rem;
 			position: relative;
 			display: inline-flex;
 			align-items: center;
