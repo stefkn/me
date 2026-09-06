@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Image } from "astro:assets";
+import PostCardImage from "../components/PostCardImage.astro";
 import { getCollection } from "astro:content";
 const allPosts = await getCollection("posts");
 const featuredPost = allPosts.find((post) => post.data.featured);
@@ -31,12 +31,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 					</div>
 					<div class="article-image">
 						<a href={`${base}posts/${featuredPost.slug}/`}>
-							<Image
-								src={featuredPost.data.image}
-								alt={featuredPost.data.imageAlt}
-								class="post-index-card-image"
-								onload="this.style.opacity=1; this.style.filter='grayscale(0)'"
-							/>
+							<PostCardImage post={featuredPost} base={base} />
 						</a>
 					</div>
 				</div>
@@ -55,12 +50,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 					</div>
 					<div class="article-image">
 						<a href={`${base}posts/${post.slug}/`}>
-							<Image
-								src={post.data.image}
-								alt={post.data.imageAlt}
-								class="post-index-card-image"
-								onload="this.style.opacity=1; this.style.filter='grayscale(0)'"
-							/>
+							<PostCardImage post={post} base={base} />
 						</a>
 					</div>
 				</div>
