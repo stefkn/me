@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# generated header art (regenerated on build/dev by the generate-art integration)
+public/generated/
+
 # generated types
 .astro/
 
