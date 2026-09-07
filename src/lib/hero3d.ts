@@ -90,6 +90,10 @@ void main() {
     vec3 q = floor(p / CELL) * CELL + 0.5 * CELL;
     float f = map(q, t);
     float density = smoothstep(thresh, thresh + 1.0, f);
+    float lifeHash = hash(dot(q, vec3(11.3, 17.7, 23.9)));
+    float isLife = step(lifeHash, 0.08);
+    float life = 0.5 + 0.5 * sin(t * 0.7 + lifeHash * 50.0);
+    density *= mix(1.0, life, isLife);
     if (density > 0.003) {
       vec3 n = vec3(0.0);
       for (int i = 0; i < 7; i++) {
