@@ -106,6 +106,7 @@ void main() {
       vec3 bcol = mix(u_colors[i0], u_colors[i1], fract(fi));
       float brightJit = hash(dot(q, vec3(269.5, 183.3, 421.7)));
       col = bcol * (0.5 + 0.7 * diff) * (0.8 + 0.4 * brightJit);
+      col *= smoothstep(thresh, thresh + 0.5, f);
 
       float depth = length(q - ro);
       col *= 1.0 - smoothstep(2.0, 8.0, depth) * 0.5;
