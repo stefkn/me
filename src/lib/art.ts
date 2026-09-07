@@ -19,6 +19,9 @@ export interface ArtConfig {
   height: number;
   background: string;
   backgroundBottom: string;
+  accent: string;
+  palette: string[];
+  neon: string[];
   fields: ArtField[];
 }
 
@@ -103,6 +106,12 @@ export function generateArt(
   const light = hslToHex(hue + 35 + (rng() - 0.5) * 14, saturation, 0.88 + rng() * 0.04);
   const accent = hslToHex(hue + 180 + (rng() - 0.5) * 20, 0.7 + rng() * 0.2, 0.5 + rng() * 0.1);
   const shades = [deep, mid, light];
+  const neon = [
+    hslToHex(hue - 12, 0.9, 0.30),
+    hslToHex(hue - 4, 0.95, 0.44),
+    hslToHex(hue + 4, 1.0, 0.58),
+    hslToHex(hue + 12, 0.9, 0.72),
+  ];
 
   const fieldCount = 4;
   const fieldColors = [
@@ -137,6 +146,9 @@ export function generateArt(
     height,
     background: deep,
     backgroundBottom: light,
+    accent,
+    palette: [deep, mid, light, accent],
+    neon,
     fields,
   };
 }
