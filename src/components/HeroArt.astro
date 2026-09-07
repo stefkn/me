@@ -24,9 +24,12 @@ const configJson = JSON.stringify(cfg);
     height={cfg.height}
   />
   <canvas class="hero-art-canvas" aria-hidden="true"></canvas>
+  <canvas class="hero-art-canvas3d" aria-hidden="true"></canvas>
 </div>
 
 <script>
+  import { createHero3D, type Hero3DRenderer } from "../lib/hero3d";
+
   interface Field {
     id: string;
     cx: number;
@@ -48,6 +51,9 @@ const configJson = JSON.stringify(cfg);
     height: number;
     background: string;
     backgroundBottom: string;
+    accent: string;
+    palette: string[];
+    neon: string[];
     fields: Field[];
   }
 
@@ -112,6 +118,7 @@ const configJson = JSON.stringify(cfg);
   let canvas: HTMLCanvasElement | null = null;
   let ctx: CanvasRenderingContext2D | null = null;
   let cfg: ArtConfig | null = null;
+  let renderer3d: Hero3DRenderer | null = null;
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
@@ -128,11 +135,20 @@ const configJson = JSON.stringify(cfg);
     const img = root.querySelector<HTMLImageElement>(".hero-art-img");
     const cssWidth = img ? img.offsetWidth : cfg.width;
     const cssHeight = Math.round(cssWidth * (cfg.height / cfg.width));
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const pxW = cssWidth;
+    const pxH = cssHeight;
     canvas.style.width = `${cssWidth}px`;
     canvas.style.height = `${cssHeight}px`;
-    canvas.width = Math.round(cssWidth * dpr);
-    canvas.height = Math.round(cssHeight * dpr);
+    canvas.width = pxW;
+    canvas.height = pxH;
+    if (renderer3d) {
+      const canvas3d = root.querySelector<HTMLCanvasElement>(".hero-art-canvas3d");
+      if (canvas3d) {
+        canvas3d.style.width = `${cssWidth}px`;
+        canvas3d.style.height = `${cssHeight}px`;
+        renderer3d.resize(pxW, pxH);
+      }
+    }
   }
 
   function render(t: number) {
@@ -177,7 +193,11 @@ const configJson = JSON.stringify(cfg);
   }
 
   function frame(now: number) {
-    render(now / 1000);
+    const t = now / 1000;
+    render(t);
+    if (renderer3d) {
+      renderer3d.render(t, window.scrollY);
+    }
     if (root && !root.classList.contains("is-animated")) {
       root.classList.add("is-animated");
     }
@@ -194,6 +214,7 @@ const configJson = JSON.stringify(cfg);
       canvas = null;
       ctx = null;
       cfg = null;
+      renderer3d = null;
       return;
     }
     if (next.dataset.bound) return;
@@ -207,6 +228,12 @@ const configJson = JSON.stringify(cfg);
     canvas = next.querySelector<HTMLCanvasElement>(".hero-art-canvas");
     ctx = canvas ? canvas.getContext("2d") : null;
     if (!canvas || !ctx) return;
+
+    renderer3d = null;
+    const canvas3d = next.querySelector<HTMLCanvasElement>(".hero-art-canvas3d");
+    if (canvas3d) {
+      renderer3d = createHero3D(canvas3d, cfg.neon, 0.9);
+    }
 
     stopLoop();
     sizeCanvas();
@@ -230,7 +257,8 @@ const configJson = JSON.stringify(cfg);
 
 <style>
   .hero-art-img,
-  .hero-art-canvas {
+  .hero-art-canvas,
+  .hero-art-canvas3d {
     position: absolute;
     top: 0;
     left: 0;
@@ -252,9 +280,19 @@ const configJson = JSON.stringify(cfg);
       rgba(0, 0, 0, 0.1) 79%,
       transparent 84%
     );
-    -webkit-filter: blur(24px) saturate(1.2);
-    filter: blur(24px) saturate(1.2);
     transform: scale(1.12);
+  }
+
+  .hero-art-img,
+  .hero-art-canvas {
+    -webkit-filter: blur(18px) saturate(1.2);
+    filter: blur(18px) saturate(1.2);
+  }
+
+  .hero-art-canvas3d {
+    -webkit-filter: blur(10px) saturate(1.4);
+    filter: blur(10px) saturate(1.4);
+    mix-blend-mode: screen;
   }
 
   .hero-art-img {
@@ -263,7 +301,8 @@ const configJson = JSON.stringify(cfg);
     transition: opacity 2s ease;
   }
 
-  .hero-art-canvas {
+  .hero-art-canvas,
+  .hero-art-canvas3d {
     opacity: 0;
     transition: opacity 2s ease;
   }
@@ -272,7 +311,8 @@ const configJson = JSON.stringify(cfg);
     opacity: 0;
   }
 
-  .hero-art.is-animated .hero-art-canvas {
+  .hero-art.is-animated .hero-art-canvas,
+  .hero-art.is-animated .hero-art-canvas3d {
     opacity: 1;
   }
 </style>
