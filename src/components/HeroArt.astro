@@ -250,7 +250,7 @@ const configJson = JSON.stringify(cfg);
     renderer3d = null;
     const canvas3d = next.querySelector<HTMLCanvasElement>(".hero-art-canvas3d");
     if (canvas3d) {
-      renderer3d = createHero3D(canvas3d, cfg.neon, 0.9);
+      renderer3d = createHero3D(canvas3d, cfg.neon, cfg.accent, 0.9);
     }
 
     if (observer) {

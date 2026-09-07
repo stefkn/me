@@ -135,7 +135,7 @@ export function generateArt(
       driftAmp: isAccent ? 0.12 + rng() * 0.1 : 0.25 + rng() * 0.3,
       driftSpeed: 0.06 + rng() * 0.09,
       driftSpeedY: 0.08 + rng() * 0.17,
-      hueDrift: 0.3 + rng() * 0.7,
+      hueDrift: 0,
       phase: rng() * Math.PI * 2,
     });
   }
