@@ -107,10 +107,10 @@ export function generateArt(
   const accent = hslToHex(hue + 180 + (rng() - 0.5) * 20, 0.7 + rng() * 0.2, 0.5 + rng() * 0.1);
   const shades = [deep, mid, light];
   const neon = [
-    hslToHex(hue - 12, 0.9, 0.30),
-    hslToHex(hue - 4, 0.95, 0.44),
-    hslToHex(hue + 4, 1.0, 0.58),
-    hslToHex(hue + 12, 0.9, 0.72),
+    hslToHex(hue - 12, 1.0, 0.42),
+    hslToHex(hue - 4, 1.0, 0.54),
+    hslToHex(hue + 4, 1.0, 0.66),
+    hslToHex(hue + 12, 1.0, 0.78),
   ];
 
   const fieldCount = 4;

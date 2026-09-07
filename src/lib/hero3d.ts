@@ -100,7 +100,11 @@ void main() {
       }
       n = normalize(n + 1e-4);
       vec3 L = normalize(vec3(-0.5, 0.4, 1.0));
+      vec3 viewDir = -rd;
+      vec3 halfVec = normalize(L + viewDir);
       float diff = clamp(dot(n, L), 0.0, 1.0);
+      float spec = pow(max(dot(n, halfVec), 0.0), 28.0);
+      float rim = pow(1.0 - max(dot(n, viewDir), 0.0), 3.0);
 
       float shadeT = clamp((f - thresh) / 2.5, 0.0, 1.0);
       float jit = hash(dot(q, vec3(127.1, 311.7, 74.7)));
@@ -110,7 +114,10 @@ void main() {
       int i1 = min(i0 + 1, 3);
       vec3 bcol = mix(u_colors[i0], u_colors[i1], fract(fi));
       float brightJit = hash(dot(q, vec3(269.5, 183.3, 421.7)));
-      vec3 vcol = bcol * (0.5 + 0.7 * diff) * (0.8 + 0.4 * brightJit);
+      vec3 vcol =
+        bcol * (0.4 + 0.9 * diff) * (0.8 + 0.4 * brightJit) +
+        vec3(1.0) * spec * 1.0 +
+        vec3(1.0) * rim * 0.5;
 
       float depth = length(q - ro);
       vcol *= 1.0 - smoothstep(2.0, 8.0, depth) * 0.5;
