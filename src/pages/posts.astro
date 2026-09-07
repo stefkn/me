@@ -88,7 +88,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 	main {
 		margin-top: 3rem;
 	}
-	.post-index-card-image {
+	:global(.post-index-card-image) {
 		-webkit-transition: all 2s ease;
 		-moz-transition: all 2s ease;
 		-ms-transition: all 2s ease;
@@ -96,6 +96,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 		height: auto;
 		opacity: 0;
 		filter: grayscale(1);
+	}
+	:global(.article-post img) {
+		border-radius: 12px;
 	}
 	.articles {
 		display: grid;
@@ -124,9 +127,6 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 				line-height: 1;
 				font-size: var(--text-lg);
 				text-decoration: none;
-			}
-			img {
-				border-radius: 12px;
 			}
 
 			.post-date {
