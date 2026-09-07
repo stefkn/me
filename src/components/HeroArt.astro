@@ -285,6 +285,22 @@ const configJson = JSON.stringify(cfg);
 </script>
 
 <style>
+  .hero-art {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  @media (max-width: 630px) {
+    .hero-art {
+      aspect-ratio: 10 / 13;
+    }
+  }
+
   .hero-art-img,
   .hero-art-canvas,
   .hero-art-canvas3d {
@@ -292,7 +308,7 @@ const configJson = JSON.stringify(cfg);
     top: 0;
     left: 0;
     width: 100%;
-    z-index: -1;
+    height: 100%;
     -webkit-mask-image: radial-gradient(
       ellipse 200% 120% at 40% 0%,
       #000 48%,
@@ -309,6 +325,7 @@ const configJson = JSON.stringify(cfg);
       rgba(0, 0, 0, 0.1) 79%,
       transparent 84%
     );
+    transform: scale(1.12);
   }
 
   .hero-art-img,
@@ -324,16 +341,9 @@ const configJson = JSON.stringify(cfg);
   }
 
   .hero-art-img {
-    height: auto;
+    object-fit: cover;
     opacity: 1;
     transition: opacity 2s ease;
-  }
-
-  @media (max-width: 630px) {
-    .hero-art-img {
-      height: 130vw;
-      object-fit: cover;
-    }
   }
 
   .hero-art-canvas,
