@@ -85,7 +85,8 @@ void main() {
   vec3 col = vec3(0.0);
   float trans = 1.0;
 
-  vec3 p = ro;
+  float jitter = hash(gl_FragCoord.x * 13.71 + gl_FragCoord.y * 7.93);
+  vec3 p = ro + rd * jitter * CELL;
   for (int s = 0; s < 80; s++) {
     vec3 q = floor(p / CELL) * CELL + 0.5 * CELL;
     float f = map(q, t);
