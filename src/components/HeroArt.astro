@@ -119,6 +119,8 @@ const configJson = JSON.stringify(cfg);
   let ctx: CanvasRenderingContext2D | null = null;
   let cfg: ArtConfig | null = null;
   let renderer3d: Hero3DRenderer | null = null;
+  let observer: IntersectionObserver | null = null;
+  let heroVisible = true;
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
@@ -127,6 +129,18 @@ const configJson = JSON.stringify(cfg);
     if (rafId != null) {
       cancelAnimationFrame(rafId);
       rafId = null;
+    }
+  }
+
+  function updateLoop() {
+    const active =
+      !reducedMotion && heroVisible && !document.hidden && root != null;
+    if (active) {
+      if (rafId == null) {
+        rafId = requestAnimationFrame(frame);
+      }
+    } else {
+      stopLoop();
     }
   }
 
@@ -203,15 +217,17 @@ const configJson = JSON.stringify(cfg);
     if (root && !root.classList.contains("is-animated")) {
       root.classList.add("is-animated");
     }
-    if (!reducedMotion) {
-      rafId = requestAnimationFrame(frame);
-    }
+    rafId = requestAnimationFrame(frame);
   }
 
   function initArt() {
     const next = document.querySelector<HTMLElement>(".hero-art");
     if (!next) {
       stopLoop();
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
       root = null;
       canvas = null;
       ctx = null;
@@ -237,19 +253,28 @@ const configJson = JSON.stringify(cfg);
       renderer3d = createHero3D(canvas3d, cfg.neon, 0.9);
     }
 
+    if (observer) {
+      observer.disconnect();
+    }
+    heroVisible = true;
+    observer = new IntersectionObserver((entries) => {
+      heroVisible = entries[0]?.isIntersecting ?? true;
+      updateLoop();
+    });
+    observer.observe(next);
+
     stopLoop();
     sizeCanvas();
-    rafId = requestAnimationFrame(frame);
+    render(0);
+    if (renderer3d) {
+      renderer3d.render(0, window.scrollY);
+    }
+    root.classList.add("is-animated");
+    updateLoop();
   }
 
   document.addEventListener("astro:page-load", initArt);
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      stopLoop();
-    } else if (root && !reducedMotion && rafId == null) {
-      rafId = requestAnimationFrame(frame);
-    }
-  });
+  document.addEventListener("visibilitychange", updateLoop);
   window.addEventListener("resize", () => {
     if (root) sizeCanvas();
   });
@@ -323,5 +348,13 @@ const configJson = JSON.stringify(cfg);
   .hero-art.is-animated .hero-art-canvas,
   .hero-art.is-animated .hero-art-canvas3d {
     opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-art-img,
+    .hero-art-canvas,
+    .hero-art-canvas3d {
+      transition: none;
+    }
   }
 </style>
