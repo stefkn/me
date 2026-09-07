@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import HeroArt from "../../components/HeroArt.astro";
+import SectionIndicator from "../../components/SectionIndicator.astro";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("posts");
@@ -25,6 +26,8 @@ const pubDate = entry.data.pubDate;
   title={entry.data.title}
   image={{ src: `${base}generated/art/${entry.slug}.png`, alt: heroAlt }}
 >
+  <SectionIndicator />
+
   <HeroArt
     slug={entry.slug}
     alt={heroAlt}
