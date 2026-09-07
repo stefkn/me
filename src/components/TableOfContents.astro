@@ -20,16 +20,14 @@ function buildToc(headings: any) {
 }
 ---
 
-<nav class="toc">
+<nav class="toc" aria-label="Table of contents">
   <ul>
     {toc.map((heading: any) => <TableOfContentsHeading heading={heading} />)}
   </ul>
-  <svg class="toc-progress" xmlns="http://www.w3.org/2000/svg">
+  <svg class="toc-progress" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path
       class="toc-marker"
       fill="none"
-      stroke="#ff27a7"
-      stroke-width="4"
       stroke-dashoffset="1"
       stroke-linecap="round"
       stroke-linejoin="round"></path>
@@ -62,6 +60,8 @@ function buildToc(headings: any) {
     pointer-events: none;
   }
   path.toc-marker {
+    stroke: var(--color-accent);
+    stroke-width: 3;
     transition: stroke-dasharray 0.3s ease;
     pointer-events: none;
   }
@@ -172,14 +172,18 @@ function buildToc(headings: any) {
             document.querySelectorAll("a.active").length === 1;
 
           if (removing && onlyOneActive) {
-            document.querySelectorAll("a.active")[0].classList.remove("active");
+            const current = document.querySelector("a.active");
+            current?.classList.remove("active");
+            current?.removeAttribute("aria-current");
             return;
           }
 
           if (removing) {
             link.classList.remove("active");
+            link.removeAttribute("aria-current");
           } else {
             link.classList.add("active");
+            link.setAttribute("aria-current", "true");
           }
           updatePath();
         });
