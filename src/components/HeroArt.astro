@@ -261,7 +261,9 @@ const configJson = JSON.stringify(cfg);
       heroVisible = entries[0]?.isIntersecting ?? true;
       updateLoop();
     });
-    observer.observe(next);
+    const heroEl =
+      next.querySelector<HTMLElement>(".hero-art-img") ?? next;
+    observer.observe(heroEl);
 
     stopLoop();
     sizeCanvas();
