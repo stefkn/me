@@ -134,7 +134,9 @@ const configJson = JSON.stringify(cfg);
     if (!canvas || !cfg || !root) return;
     const img = root.querySelector<HTMLImageElement>(".hero-art-img");
     const cssWidth = img ? img.offsetWidth : cfg.width;
-    const cssHeight = Math.round(cssWidth * (cfg.height / cfg.width));
+    const cssHeight = img && img.offsetHeight
+      ? img.offsetHeight
+      : Math.round(cssWidth * (cfg.height / cfg.width));
     const pxW = cssWidth;
     const pxH = cssHeight;
     canvas.style.width = `${cssWidth}px`;
@@ -299,6 +301,13 @@ const configJson = JSON.stringify(cfg);
     height: auto;
     opacity: 1;
     transition: opacity 2s ease;
+  }
+
+  @media (max-width: 630px) {
+    .hero-art-img {
+      height: 130vw;
+      object-fit: cover;
+    }
   }
 
   .hero-art-canvas,
