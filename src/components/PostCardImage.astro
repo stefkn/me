@@ -10,7 +10,7 @@ interface Props {
 const { post, base } = Astro.props;
 const image = post.data.image;
 const alt = post.data.imageAlt ?? post.data.title;
-const fallbackSrc = `${base}generated/art/${post.slug}-hero.png`;
+const fallbackSrc = `${base}generated/art/${post.slug}-card.png`;
 ---
 
 {
