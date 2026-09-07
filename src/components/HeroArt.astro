@@ -293,6 +293,22 @@ const configJson = JSON.stringify(cfg);
     aspect-ratio: 16 / 9;
     overflow: hidden;
     z-index: -1;
+    -webkit-mask-image: radial-gradient(
+      ellipse 200% 120% at 40% 0%,
+      #000 42%,
+      rgba(0, 0, 0, 0.7) 58%,
+      rgba(0, 0, 0, 0.35) 70%,
+      rgba(0, 0, 0, 0.1) 78%,
+      transparent 83%
+    );
+    mask-image: radial-gradient(
+      ellipse 200% 120% at 40% 0%,
+      #000 42%,
+      rgba(0, 0, 0, 0.7) 58%,
+      rgba(0, 0, 0, 0.35) 70%,
+      rgba(0, 0, 0, 0.1) 78%,
+      transparent 83%
+    );
   }
 
   @media (max-width: 630px) {
@@ -309,22 +325,6 @@ const configJson = JSON.stringify(cfg);
     left: 0;
     width: 100%;
     height: 100%;
-    -webkit-mask-image: radial-gradient(
-      ellipse 200% 120% at 40% 0%,
-      #000 48%,
-      rgba(0, 0, 0, 0.7) 60%,
-      rgba(0, 0, 0, 0.35) 71%,
-      rgba(0, 0, 0, 0.1) 79%,
-      transparent 84%
-    );
-    mask-image: radial-gradient(
-      ellipse 200% 120% at 40% 0%,
-      #000 48%,
-      rgba(0, 0, 0, 0.7) 60%,
-      rgba(0, 0, 0, 0.35) 71%,
-      rgba(0, 0, 0, 0.1) 79%,
-      transparent 84%
-    );
     transform: scale(1.12);
   }
 
