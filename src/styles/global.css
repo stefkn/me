@@ -79,6 +79,7 @@ html {
   font-family: system-ui, sans-serif;
   background: white;
   background-size: 224px;
+  overflow-x: clip;
 }
 
 body::-webkit-scrollbar-track {
@@ -388,6 +389,7 @@ blockquote {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 /*
