@@ -10,10 +10,12 @@ const OUT_DIR = path.resolve(process.cwd(), "public/generated/art");
 
 const HERO = { width: 1920, height: 1080 };
 const OG = { width: 1200, height: 630 };
+const CARD = { width: 640, height: 360 };
 
 interface ManifestEntry {
   hero: string;
   og: string;
+  card: string;
 }
 
 async function dirExists(p: string): Promise<boolean> {
@@ -25,20 +27,35 @@ async function dirExists(p: string): Promise<boolean> {
   }
 }
 
+async function collectFiles(dir: string): Promise<string[]> {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files: string[] = [];
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...(await collectFiles(full)));
+    } else if (/\.(md|mdx)$/.test(entry.name)) {
+      files.push(full);
+    }
+  }
+  return files;
+}
+
 export async function generateArtFiles(): Promise<void> {
   if (!(await dirExists(POSTS_DIR))) {
     console.log("[generate-art] no posts directory, skipping");
     return;
   }
 
-  const files = (await readdir(POSTS_DIR)).filter((f) => /\.(md|mdx)$/.test(f));
+  const files = await collectFiles(POSTS_DIR);
   await mkdir(OUT_DIR, { recursive: true });
 
   const manifest: Record<string, ManifestEntry> = {};
 
   for (const file of files) {
-    const slug = file.replace(/\.(md|mdx)$/, "");
-    const raw = readFileSync(path.join(POSTS_DIR, file), "utf8");
+    const rel = path.relative(POSTS_DIR, file).replace(/\\/g, "/");
+    const slug = rel.replace(/\.(md|mdx)$/, "");
+    const raw = readFileSync(file, "utf8");
     const { data } = matter(raw);
 
     const cfg = generateArt(slug, {
@@ -47,12 +64,21 @@ export async function generateArtFiles(): Promise<void> {
     });
 
     const heroBuf = await renderPNG(cfg, HERO.width, HERO.height);
-    await writeFile(path.join(OUT_DIR, `${slug}-hero.png`), heroBuf);
+    const heroPath = path.join(OUT_DIR, `${slug}-hero.png`);
+    await mkdir(path.dirname(heroPath), { recursive: true });
+    await writeFile(heroPath, heroBuf);
 
     const ogBuf = await renderPNG(cfg, OG.width, OG.height);
     await writeFile(path.join(OUT_DIR, `${slug}.png`), ogBuf);
 
-    manifest[slug] = { hero: `${slug}-hero.png`, og: `${slug}.png` };
+    const cardBuf = await renderPNG(cfg, CARD.width, CARD.height);
+    await writeFile(path.join(OUT_DIR, `${slug}-card.png`), cardBuf);
+
+    manifest[slug] = {
+      hero: `${slug}-hero.png`,
+      og: `${slug}.png`,
+      card: `${slug}-card.png`,
+    };
     console.log(`[generate-art] generated art for "${slug}"`);
   }
 
