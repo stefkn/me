@@ -82,17 +82,22 @@ void main() {
   float CELL = 0.2;
   float thresh = 1.2;
   vec3 col = vec3(0.0);
+  float trans = 1.0;
 
   vec3 p = ro;
   for (int s = 0; s < 80; s++) {
     vec3 q = floor(p / CELL) * CELL + 0.5 * CELL;
     float f = map(q, t);
-    if (f > thresh) {
-      vec3 n = vec3(
-        map(q + vec3(CELL, 0.0, 0.0), t) - map(q - vec3(CELL, 0.0, 0.0), t),
-        map(q + vec3(0.0, CELL, 0.0), t) - map(q - vec3(0.0, CELL, 0.0), t),
-        map(q + vec3(0.0, 0.0, CELL), t) - map(q - vec3(0.0, 0.0, CELL), t)
-      );
+    float density = smoothstep(thresh, thresh + 1.0, f);
+    if (density > 0.003) {
+      vec3 n = vec3(0.0);
+      for (int i = 0; i < 7; i++) {
+        vec3 c = blobPos(i, t);
+        float r = blobRadius(i);
+        vec3 d = q - c;
+        float d2 = dot(d, d);
+        n += (r * r / (d2 * d2)) * d;
+      }
       n = normalize(n + 1e-4);
       vec3 L = normalize(vec3(-0.5, 0.4, 1.0));
       float diff = clamp(dot(n, L), 0.0, 1.0);
@@ -105,17 +110,20 @@ void main() {
       int i1 = min(i0 + 1, 3);
       vec3 bcol = mix(u_colors[i0], u_colors[i1], fract(fi));
       float brightJit = hash(dot(q, vec3(269.5, 183.3, 421.7)));
-      col = bcol * (0.5 + 0.7 * diff) * (0.8 + 0.4 * brightJit);
-      col *= smoothstep(thresh, thresh + 0.5, f);
+      vec3 vcol = bcol * (0.5 + 0.7 * diff) * (0.8 + 0.4 * brightJit);
 
       float depth = length(q - ro);
-      col *= 1.0 - smoothstep(2.0, 8.0, depth) * 0.5;
-      col *= u_alpha;
-      break;
+      vcol *= 1.0 - smoothstep(2.0, 8.0, depth) * 0.5;
+
+      float alpha = density * 0.22;
+      col += trans * vcol * alpha;
+      trans *= (1.0 - alpha);
+      if (trans < 0.02) break;
     }
     p += rd * CELL * 0.5;
   }
 
+  col *= u_alpha;
   outColor = vec4(col, 1.0);
 }`;
 
