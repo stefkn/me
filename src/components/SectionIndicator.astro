@@ -1,0 +1,132 @@
+---
+---
+
+<div id="section-indicator" aria-hidden="true">
+  <div class="section-indicator-inner">
+    <span class="section-indicator-eyebrow">now reading</span>
+    <span id="section-indicator-text"></span>
+  </div>
+</div>
+
+<style>
+  #section-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 8;
+    pointer-events: none;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    transform: translateY(-100%);
+    opacity: 0;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  #section-indicator.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .section-indicator-inner {
+    max-width: 750px;
+    margin: auto;
+    padding: 0.9rem 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .section-indicator-eyebrow {
+    flex: none;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  #section-indicator-text {
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #section-indicator {
+      transition: none;
+    }
+    #section-indicator-text {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const indicator = document.getElementById("section-indicator");
+    const textEl = document.getElementById("section-indicator-text");
+    if (!indicator || !textEl) return;
+
+    const headings = Array.from(
+      document.querySelectorAll("#main-wrapper h2, #main-wrapper h3"),
+    );
+    if (!headings.length) return;
+
+    const mainWrapper = document.getElementById("main-wrapper");
+    const showAfter = mainWrapper
+      ? mainWrapper.offsetTop - window.innerHeight * 0.6
+      : 0;
+
+    const visible = new Set();
+
+    function updateText() {
+      const current = headings.find((h) => visible.has(h));
+      if (!current || current.textContent === textEl!.textContent) return;
+      textEl!.style.opacity = "0";
+      setTimeout(() => {
+        textEl!.textContent = current.textContent!.trim();
+        textEl!.style.opacity = "1";
+      }, 150);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visible.add(entry.target);
+          else visible.delete(entry.target);
+        });
+        updateText();
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 },
+    );
+
+    headings.forEach((h) => observer.observe(h));
+
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    function update() {
+      const y = window.scrollY;
+      const show = y > showAfter && y > lastY;
+      indicator!.classList.toggle("visible", show);
+      lastY = y;
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  });
+</script>
