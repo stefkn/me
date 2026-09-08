@@ -278,7 +278,12 @@ const configJson = JSON.stringify(cfg);
   document.addEventListener("astro:page-load", initArt);
   document.addEventListener("visibilitychange", updateLoop);
   window.addEventListener("resize", () => {
-    if (root) sizeCanvas();
+    if (!root) return;
+    sizeCanvas();
+    render(0);
+    if (renderer3d) {
+      renderer3d.render(0, window.scrollY);
+    }
   });
 
   initArt();
