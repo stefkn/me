@@ -1,0 +1,32 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  base: string;
+}
+
+const { post, base } = Astro.props;
+const image = post.data.image;
+const alt = post.data.imageAlt ?? post.data.title;
+const fallbackSrc = `${base}generated/art/${post.slug}-card.png`;
+---
+
+{
+  image ? (
+    <Image
+      src={image}
+      alt={alt}
+      class="post-index-card-image"
+      onload="this.style.opacity=1; this.style.filter='grayscale(0)'"
+    />
+  ) : (
+    <img
+      src={fallbackSrc}
+      alt={alt}
+      class="post-index-card-image"
+      onload="this.style.opacity=1; this.style.filter='grayscale(0)'"
+    />
+  )
+}

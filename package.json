@@ -18,6 +18,9 @@
     "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@iconify-json/skill-icons": "^1.1.8"
+    "@iconify-json/skill-icons": "^1.1.8",
+    "gray-matter": "^4.0.3",
+    "sharp": "^0.35.4",
+    "tsx": "^4.23.13"
   }
 }

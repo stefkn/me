@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 import icon from "astro-icon";
+import generateArt from './src/integrations/generateArt';
 
 // https://astro.build/config
 export default defineConfig({
@@ -25,5 +26,5 @@ export default defineConfig({
       transformers: []
     }
   },
-  integrations: [icon()]
+  integrations: [icon(), generateArt()]
 });
