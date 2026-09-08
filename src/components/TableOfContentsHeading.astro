@@ -3,7 +3,10 @@ const { heading } = Astro.props;
 ---
 
 <li>
-  <a href={"#" + heading.slug} onclick={"window.lenis.scrollTo(" + "'#" + heading.slug + "')"}>
+  <a
+    href={`#${heading.slug}`}
+    onclick={`if (window.lenis) { event.preventDefault(); window.lenis.scrollTo('#${heading.slug}'); }`}
+  >
     {heading.text}
   </a>
   {
@@ -18,21 +21,29 @@ const { heading } = Astro.props;
 </li>
 
 <style>
-  ul, li {
-    margin: 0.2rem 0.2rem 0.2rem 0.2rem;
-    padding: 0;
-    gap: 0.3rem;
-  }
   ul {
     list-style: none;
-    list-style-type: none;
-    display: grid;
+    margin: 0;
     padding-left: 1.2rem;
   }
+
   li {
-    display: grid;
-    a {
-      font-weight: bold;
-    }
+    margin: 0.35rem 0;
+  }
+
+  a {
+    display: block;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--color-accent);
+  }
+
+  a.active {
+    color: var(--color-accent-strong);
   }
 </style>

@@ -204,7 +204,14 @@ const pubDate = entry.data.pubDate;
     position: sticky;
     top: 5rem;
     max-height: calc(100vh - 6rem);
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  #article-aside::-webkit-scrollbar {
+    display: none;
   }
 
   #toggle-hide-side-mobile {
