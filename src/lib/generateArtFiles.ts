@@ -2,8 +2,9 @@ import { readdir, writeFile, mkdir, access } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { generateArt } from "./art";
-import { renderPNG } from "./renderStaticArt";
+import { hashString } from "./rng";
+import { BANK } from "./art";
+import { renderArtPNG } from "./renderStaticArt";
 
 const POSTS_DIR = path.resolve(process.cwd(), "src/content/posts");
 const OUT_DIR = path.resolve(process.cwd(), "public/generated/art");
@@ -58,20 +59,17 @@ export async function generateArtFiles(): Promise<void> {
     const raw = readFileSync(file, "utf8");
     const { data } = matter(raw);
 
-    const cfg = generateArt(slug, {
-      seed: typeof data.seed === "number" ? data.seed : undefined,
-      hue: typeof data.hue === "number" ? data.hue : undefined,
-    });
+    const seed = typeof data.seed === "number" ? data.seed : hashString(slug);
 
-    const heroBuf = await renderPNG(cfg, HERO.width, HERO.height);
+    const heroBuf = await renderArtPNG(seed, BANK, HERO.width, HERO.height);
     const heroPath = path.join(OUT_DIR, `${slug}-hero.png`);
     await mkdir(path.dirname(heroPath), { recursive: true });
     await writeFile(heroPath, heroBuf);
 
-    const ogBuf = await renderPNG(cfg, OG.width, OG.height);
+    const ogBuf = await renderArtPNG(seed, BANK, OG.width, OG.height);
     await writeFile(path.join(OUT_DIR, `${slug}.png`), ogBuf);
 
-    const cardBuf = await renderPNG(cfg, CARD.width, CARD.height);
+    const cardBuf = await renderArtPNG(seed, BANK, CARD.width, CARD.height);
     await writeFile(path.join(OUT_DIR, `${slug}-card.png`), cardBuf);
 
     manifest[slug] = {

@@ -7,6 +7,9 @@ public/generated/
 # generated types
 .astro/
 
+# palette extraction preview
+.palette-preview/
+
 # dependencies
 node_modules/
 
