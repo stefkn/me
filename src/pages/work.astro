@@ -4,7 +4,6 @@ import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
 import stefanImage from "../assets/stefan.jpg";
-import cvImage from "../assets/cv.png";
 import enkiLogo from "../assets/enki_logo.jpg";
 import tailsLogo from "../assets/tails_logo.png";
 import krakenLogo from "../assets/krakentech_logo.svg";
@@ -29,429 +28,329 @@ import {
 	kclStack,
 } from "../content/technologies";
 
-const pageTitle = "Résumé/CV";
+const pageTitle = "Work";
+const cvUrl =
+	"https://docs.google.com/presentation/d/17DqKnTw6O60B9ycDUaiPnrLB5iLsREHoJxvHP7KKiA4/edit?usp=sharing";
+
+const skills = [
+	{ label: "Programming languages", items: programmingLanguages },
+	{ label: "Web technologies", items: webTechnologies },
+	{ label: "DevOps & infrastructure", items: devopsInfra },
+	{ label: "Databases", items: databases },
+	{ label: "Testing & QA", items: testing },
+	{ label: "Other stuff", items: otherTechnologies },
+];
 ---
 
 <Layout title={pageTitle}>
-	<div>
-		<Image
-			src={stefanImage}
-			alt="A picture of Stefan Nowak"
-			class="full-bleed work-intro-image"
-			onload="this.style.opacity=1; this.style.filter='saturate(1.05)'"
-			quality="mid"
-		/>
+	<div class="work-bg" aria-hidden="true">
+		<span class="glow glow-1"></span>
+		<span class="glow glow-2"></span>
+		<span class="glow glow-3"></span>
+		<span class="dot-grid"></span>
 	</div>
-	<section id="top-content">
-		<h1 id="page-title" class="animated">work</h1>
-		<div class="cv-container">
-			<Image
-				src={cvImage}
-				alt="A picture of my CV"
-				class="cv-image"
-				onload="this.style.opacity=1; this.style.filter='saturate(1.05)'"
-				quality="low"
-				onclick=`window.location="https://docs.google.com/presentation/d/17DqKnTw6O60B9ycDUaiPnrLB5iLsREHoJxvHP7KKiA4/edit?usp=sharing"`
-			/>
-			<a
-				href="https://docs.google.com/presentation/d/17DqKnTw6O60B9ycDUaiPnrLB5iLsREHoJxvHP7KKiA4/edit?usp=sharing"
-			>
-				view my CV here
-			</a>
-		</div>
-	</section>
-	<main class="wrapper grid">
-		<section>
-			<h2 class="animated">tl;dr</h2>
-			<p>
-				I enjoy learning, building cool things and working together with kind, good 
-				people.
-			</p>
 
-			<h2>about me</h2>
-			<p>
-				I'm Stefan, a developer/software engineer in London, England 🇬🇧
-			</p>
-			<p>
-				Like many in tech, I've been tinkering with computers since I was a child
-				<sup><a href="#footnote-1" id="footnote-ref-1">1</a></sup>, and
-				I enjoy building things that make people's lives easier, more
-				fun, or just more interesting.
-			</p>
-			<p>
-				I've worked a lot in backend web development, but I also do some
-				frontend from time to time. I have also occasionally managed small teams, 
-				worked directly with external clients, mentored junior colleagues and have helped to grow teams, too. 
-			</p>
-			<p>
-				While the web is where I work most, I'm also interested in DevOps, 
-				security, systems programming, SRE and infrastructure. I also find retro 
-				computing and the history of computing and computers/science/CS very cool. 
-			</p>
-			<p id="footnote-1">
-				<sup>1</sup> Windows 95 had the best <a href="https://www.youtube.com/watch?v=I3Ak5VgyEoc">Brian Eno</a> sounds. <a href="#footnote-ref-1" aria-label="Back to footnote reference">^</a>
-			</p>
+	<div class="work-wrap">
+		<header class="hero reveal">
+			<div class="hero-media">
+				<Image
+					src={stefanImage}
+					alt="A picture of Stefan Nowak"
+					class="hero-portrait"
+					quality="mid"
+				/>
+				<span class="hero-media-frame" aria-hidden="true"></span>
+			</div>
+			<div class="hero-copy">
+				<p class="eyebrow">software engineer · london, uk</p>
+				<h1 class="hero-title">Stefan Nowak</h1>
+				<p class="hero-lede">
+					I build backend systems, small tools and the occasional
+					frontend — with a soft spot for the history of computers,
+					systems programming and anything that makes people's days a
+					little easier.
+				</p>
+				<div class="hero-actions">
+					<a class="btn btn-primary" href={cvUrl}>view cv</a>
+					<a class="btn btn-ghost" href="https://github.com/stefkn">github</a>
+				</div>
+			</div>
+		</header>
 
-			<h2>timeline</h2>
+		<section class="work-section reveal" id="about">
+			<div class="section-head">
+				<span class="section-num">01</span>
+				<h2>about</h2>
+			</div>
+			<div class="prose">
+				<p class="lede">
+					I enjoy learning, building cool things and working together
+					with kind, good people.
+				</p>
+				<p>
+					Like many in tech, I've been tinkering with computers since
+					I was a child<sup><a href="#footnote-1" id="footnote-ref-1">1</a></sup>,
+					and I enjoy building things that make people's lives easier,
+					more fun, or just more interesting.
+				</p>
+				<p>
+					I've worked a lot in backend web development, but I also do
+					some frontend from time to time. I have also occasionally
+					managed small teams, worked directly with external clients,
+					mentored junior colleagues and helped grow teams, too.
+				</p>
+				<p>
+					While the web is where I work most, I'm also interested in
+					DevOps, security, systems programming, SRE and
+					infrastructure. I also find retro computing and the history
+					of computing very cool.
+				</p>
+				<p id="footnote-1" class="footnote">
+					<sup>1</sup> Windows 95 had the best <a href="https://www.youtube.com/watch?v=I3Ak5VgyEoc">Brian Eno</a> sounds. <a href="#footnote-ref-1" aria-label="Back to footnote reference">^</a>
+				</p>
+			</div>
+		</section>
+
+		<section class="work-section reveal" id="experience">
+			<div class="section-head">
+				<span class="section-num">02</span>
+				<h2>experience</h2>
+			</div>
+
 			<div class="timeline">
-				<div class="timeline-entry">
-					<div class="flex">
-						<div class="kraken-logo-wrap">
-							<Image
-								src={krakenLogo}
-								alt="Kraken Technologies logo"
-								class="kraken-logo"
-								width="100"
-								height="100"
-							/>
-							<Image
-								src={tentacleImage}
-								alt=""
-								class="kraken-tentacle"
-								width="50"
-								height="50"
-							/>
+				<article class="timeline-item">
+					<div class="timeline-card">
+						<div class="tl-head">
+							<div class="tl-logo kraken-logo-wrap">
+								<Image src={krakenLogo} alt="Kraken Technologies logo" class="kraken-logo" width="100" height="100" />
+								<Image src={tentacleImage} alt="" class="kraken-tentacle" width="50" height="50" />
+							</div>
+							<div class="tl-title">
+								<span class="tl-period">2024 — today</span>
+								<h3>Backend Software Engineer</h3>
+								<p class="tl-company">
+									<a href="https://kraken.tech">Kraken Technologies</a>
+								</p>
+							</div>
 						</div>
-						<div class="timeline-details">
-							<h3>2024 - today</h3>
-							<strong>Backend Software Engineer</strong>
-							<p>
-								<a href="https://kraken.tech"
-									>Kraken Technologies</a
-								>
-							</p>
-						</div>
-					</div>
-					<div class="stack">
-						{
-							krakenStack.map((tech) => (
-								<li>
-									<Icon
-										name={tech.icon}
-										size={50}
-										style="margin-bottom: 0.25rem; margin: auto;"
-									/>{" "}
-									{tech.name}
+						<p class="tl-desc">
+							<i>The advanced operating system for utilities.</i>
+						</p>
+						<p class="tl-desc">
+							Building the platform that powers energy suppliers and
+							water utilities across the world — working across
+							backend services, integrations and internal tooling.
+						</p>
+						<ul class="chips">
+							{krakenStack.map((tech) => (
+								<li class="chip">
+									<Icon name={tech.icon} size={18} />
+									<span>{tech.name}</span>
 								</li>
-							))
-						}
+							))}
+						</ul>
 					</div>
-					<p>
-						<i>The advanced operating system for utilities.</i>
-					</p>
+				</article>
+
+				<article class="timeline-item">
+					<div class="timeline-card">
+						<div class="tl-head">
+							<div class="tl-logo">
+								<Image src={tailsLogo} alt="tails.com logo" class="tl-logo-img tails-logo" width="100" height="100" />
+							</div>
+							<div class="tl-title">
+								<span class="tl-period">2019 — 2024</span>
+								<h3>Backend / Full-stack Software Engineer</h3>
+								<p class="tl-company">
+									<a href="https://www.tails.com">tails.com</a>
+								</p>
+							</div>
+						</div>
+						<p class="tl-desc">
+							<i>Individually-bespoke, tailored nutrition for dogs.</i>
+						</p>
+						<p class="tl-desc">
+							I helped build a new frontend app in Vue, created the
+							BfF backend for it, and worked on the backend
+							generally, as well as updating the internal CRM/ERP
+							platform, integrating new APIs and microservices,
+							adding new features and AB tests to their Vue apps
+							and the monolithic Flask app. I made some lifelong
+							friends (human and canine) and learned a lot about
+							dogs. I also discovered <a href="https://www.thewhitecrossrichmond.com/the-pub-that-floods/">a pub in Richmond</a> that floods when the river Thames gets too high, which is often.
+						</p>
+						<ul class="chips">
+							{tailsStack.map((tech) => (
+								<li class="chip">
+									<Icon name={tech.icon} size={18} />
+									<span>{tech.name}</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				</article>
+
+				<article class="timeline-item">
+					<div class="timeline-card">
+						<div class="tl-head">
+							<div class="tl-logo">
+								<Image src={enkiLogo} alt="Enki Labs logo" class="tl-logo-img enki-logo" width="100" height="100" />
+							</div>
+							<div class="tl-title">
+								<span class="tl-period">2017 — 2018</span>
+								<h3>Freelance Contractor</h3>
+								<p class="tl-company">
+									<a href="https://www.enki.com/">Enki Labs. Inc.</a>
+								</p>
+							</div>
+						</div>
+						<p class="tl-desc">
+							<i>The AI-powered 1:1 skills coach for top performers.</i>
+						</p>
+						<p class="tl-desc">
+							I worked with Enki to contribute to their Advanced
+							Python course content, QA their TestFlight builds,
+							troubleshoot the app, MongoDB instance and billing
+							jobs as well as helping to improve their CX and UX.
+							Additionally, I discovered <a href="https://www.gigsfishandchips.com/">the best fish and chips</a> in Goodge Street, and that Țuică is dangerous.
+						</p>
+						<ul class="chips">
+							{enkiStack.map((tech) => (
+								<li class="chip">
+									<Icon name={tech.icon} size={18} />
+									<span>{tech.name}</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				</article>
+
+				<article class="timeline-item">
+					<div class="timeline-card">
+						<div class="tl-head">
+							<div class="tl-logo">
+								<Image src={kclLogo} alt="King's College London logo" class="tl-logo-img kcl-logo" width="100" height="100" />
+							</div>
+							<div class="tl-title">
+								<span class="tl-period">2015 — 2019</span>
+								<h3>MSc.(i) (Hons.) Computer Science</h3>
+								<p class="tl-company">
+									<a href="https://www.kcl.ac.uk/study/undergraduate/courses/computer-science-msci">King's College London</a>
+								</p>
+							</div>
+						</div>
+						<p class="tl-desc">
+							<i>A four-year integrated master's degree in the heart of London.</i>
+						</p>
+						<p class="tl-desc">
+							I learned a dizzying amount about computing, logic and
+							mathematics, how to complete an entire term's worth of
+							work in a single night, and how many energy drinks it
+							takes to stay awake for 48 hours. I also learned to
+							hate <a href="https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition/blob/uinverse/src/main/java/com/seriouscompany/business/java/fizzbuzz/packagenamingpackage/impl/math/arithmetics/NumberIsMultipleOfAnotherNumberVerifier.java">Java</a>.
+						</p>
+						<ul class="chips">
+							{kclStack.map((tech) => (
+								<li class="chip">
+									<Icon name={tech.icon} size={18} />
+									<span>{tech.name}</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="work-section reveal" id="skills">
+			<div class="section-head">
+				<span class="section-num">03</span>
+				<h2>skills</h2>
+			</div>
+			<p class="section-intro">
+				It doesn't really matter which technologies you "know" — what
+				counts is an enthusiasm for learning new things, a good grasp of
+				CS fundamentals, and the patience to keep trying until it works.
+				That said, here's some of the stuff I've used over the years:
+			</p>
+			<div class="skill-groups">
+				{skills.map((group) => (
+					<div class="skill-group">
+						<h3>{group.label}</h3>
+						<ul class="chips">
+							{group.items.map((tech) => (
+								<li class="chip">
+									<Icon name={tech.icon} size={18} />
+									<span>{tech.name}</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				))}
+			</div>
+		</section>
+
+		<section class="work-section reveal" id="projects">
+			<div class="section-head">
+				<span class="section-num">04</span>
+				<h2>side projects</h2>
+			</div>
+
+			<div class="projects">
+				<article class="project-card">
+					<div class="project-copy">
+						<h3>milkfeed</h3>
+						<p>A minimalistic baby feed-tracking app.</p>
+					</div>
+					<div class="project-screenshots">
+						<button class="project-screenshot-button" type="button">
+							<Image src={milkfeedAppImage} alt="Milkfeed feed-tracking dashboard" />
+						</button>
+						<button class="project-screenshot-button" type="button">
+							<Image src={milkfeedNightModeImage} alt="Milkfeed dashboard in night mode" />
+						</button>
+						<button class="project-screenshot-button" type="button">
+							<Image src={milkfeedSharedSessionImage} alt="Milkfeed shared-session invitation screen" />
+						</button>
+					</div>
+				</article>
+
+				<article class="project-card">
+					<div class="project-copy">
+						<h3>perspective</h3>
+						<p>A simple timeline for putting historical events in perspective.</p>
+					</div>
+					<div class="project-screenshots project-screenshots--perspective">
+						<button class="project-screenshot-button" type="button">
+							<Image src={perspectiveDesktopImage} alt="Perspective timeline on a desktop display" />
+						</button>
+						<button class="project-screenshot-button" type="button">
+							<Image src={perspectiveMobileImage} alt="Perspective timeline on a mobile display" />
+						</button>
+					</div>
+				</article>
+
+				<article class="project-card">
+					<div class="project-copy">
+						<h3>genetictactoe</h3>
+						<p>Naughts and Crosses, using genetic algorithms.</p>
+					</div>
+				</article>
+			</div>
+
+			<div class="extras">
+				<div class="extra">
+					<h3>Fluent conversational Japanese</h3>
+					<p>I am, as they say, <i>nihongo jõzu.</i></p>
 				</div>
-				<div class="timeline-entry">
-					<div class="flex">
-						<Image
-							src={tailsLogo}
-							alt="Tails.com logo"
-							class="tails-logo"
-							width="100"
-							height="100"
-						/>
-						<div class="timeline-details">
-							<h3>2019 - 2024</h3>
-							<strong
-								>Backend / Full-stack Software Engineer</strong
-							>
-							<p>
-								<a href="https://www.tails.com">tails.com</a>
-							</p>
-						</div>
-					</div>
-					<div class="stack">
-						{
-							tailsStack.map((tech) => (
-								<li>
-									<Icon
-										name={tech.icon}
-										size={50}
-										style="margin-bottom: 0.25rem; margin: auto;"
-									/>{" "}
-									{tech.name}
-								</li>
-							))
-						}
-					</div>
-					<p>
-						<i>Individually-bespoke, tailored nutrition for dogs.</i>
-					</p>
-					<p>
-						I helped build a new frontend app in Vue, created the BfF
-						backend for it, and worked on the backend generally, as well
-						as updating the internal CRM/ERP platform, integrating new
-						APIs and microservices, adding new features and AB tests
-						to their Vue apps and the monolithic Flask app. I made some
-						lifelong friends (human and canine) and learned a lot about
-						dogs. I also discovered <a
-							href="https://www.thewhitecrossrichmond.com/the-pub-that-floods/"
-							>a pub in Richmond</a
-						> that floods when the river Thames gets too high, which
-						is often.
-					</p>
-				</div>
-				<div class="timeline-entry">
-					<div class="flex">
-						<Image
-							src={enkiLogo}
-							alt="Enki Labs logo"
-							class="enki-logo"
-							width="100"
-							height="100"
-						/>
-						<div class="timeline-details">
-							<h3>2017 - 2018</h3>
-							<strong>Freelance Contractor</strong>
-							<p>
-								<a href="https://www.enki.com/"
-									>Enki Labs. Inc.</a
-								>
-							</p>
-						</div>
-					</div>
-					<div class="stack">
-						{
-							enkiStack.map((tech) => (
-								<li>
-									<Icon
-										name={tech.icon}
-										size={50}
-										style="margin-bottom: 0.25rem; margin: auto;"
-									/>{" "}
-									{tech.name}
-								</li>
-							))
-						}
-					</div>
-					<p>
-						<i>The AI-powered 1:1 skills coach for top performers.</i>
-					</p>
-					<p>
-						I worked with Enki to contribute to their Advanced Python
-						course content, QA their TestFlight builds, troubleshoot
-						the app, MongoDB instance and billing jobs as well as helping
-						to improve their CX and UX. Additionally, I discovered <a
-							href="https://www.gigsfishandchips.com/"
-							>the best fish and chips</a
-						> in Goodge Street, and that Țuică is dangerous.
-					</p>
-				</div>
-				<div class="timeline-entry">
-					<div class="flex">
-						<Image
-							src={kclLogo}
-							alt="King's College London logo"
-							class="kcl-logo"
-							width="100"
-							height="100"
-						/>
-						<div class="timeline-details">
-							<h3>2015 - 2019</h3>
-							<strong>MSc.(i) (Hons.) Computer Science</strong>
-							<p>
-								<a
-									href="https://www.kcl.ac.uk/study/undergraduate/courses/computer-science-msci"
-									>King's College London</a
-								>
-							</p>
-						</div>
-					</div>
-					<div class="stack">
-						{
-							kclStack.map((tech) => (
-								<li>
-									<Icon
-										name={tech.icon}
-										size={50}
-										style="margin-bottom: 0.25rem; margin: auto;"
-									/>{" "}
-									{tech.name}
-								</li>
-							))
-						}
-					</div>
-					<p>
-						<i>A four-year integrated master's degree in the heart of London.</i>
-					</p>
-					<p>
-						I learned a dizzying amount about computing, logic and mathematics,
-						how to complete an entire term's worth of work in a single
-						night, and how many energy drinks it takes to stay awake
-						for 48 hours. I also learned to hate <a
-							href="https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition/blob/uinverse/src/main/java/com/seriouscompany/business/java/fizzbuzz/packagenamingpackage/impl/math/arithmetics/NumberIsMultipleOfAnotherNumberVerifier.java"
-							>Java</a
-						>.
-					</p>
+				<div class="extra">
+					<h3>lifting heavy objects, repetitively</h3>
+					<p>Moving bits and bytes? Easy. Moving atoms? <i>Now we're talking.</i></p>
 				</div>
 			</div>
 		</section>
-		<section>
-			<h2 class="animated">skills</h2>
-			<p>
-				I'm a big believer that it doesn't really matter what specific
-				technologies you "know" – what's more important is an enthusiasm
-				for learning new things, a good understanding of CS fundamentals, 
-				and the ability to keep trying until you get it. 
-				Being kind and empathetic, and not being afraid to ask
-				for help, are also key.
-			</p>
-			<p>
-				That said, here are some of the technologies I've worked with
-				over the years, in no particular order.
-			</p>
-			<h3>Programming languages</h3>
-			<ul class="skills-icons">
-				{
-					programmingLanguages.map((tech) => (
-						<li>
-							<Icon
-								name={tech.icon}
-								size={50}
-								style="margin-bottom: 0.25rem; margin: auto;"
-							/>{" "}
-							{tech.name}
-						</li>
-					))
-				}
-			</ul>
-			<h3>Web Technologies</h3>
-			<ul class="skills-icons">
-				{
-					webTechnologies.map((tech) => (
-						<li>
-							<Icon
-								name={tech.icon}
-								size={50}
-								style="margin-bottom: 0.25rem; margin: auto;"
-							/>{" "}
-							{tech.name}
-						</li>
-					))
-				}
-			</ul>
-			<h3>DevOps and Infrastructure</h3>
-			<ul class="skills-icons">
-				{
-					devopsInfra.map((tech) => (
-						<li>
-							<Icon
-								name={tech.icon}
-								size={50}
-								style="margin-bottom: 0.25rem; margin: auto;"
-							/>{" "}
-							{tech.name}
-						</li>
-					))
-				}
-			</ul>
-			<h3>Databases</h3>
-			<ul class="skills-icons">
-				{
-					databases.map((tech) => (
-						<li>
-							<Icon
-								name={tech.icon}
-								size={50}
-								style="margin-bottom: 0.25rem; margin: auto;"
-							/>{" "}
-							{tech.name}
-						</li>
-					))
-				}
-			</ul>
-			<h3>Testing and QA</h3>
-			<ul class="skills-icons">
-				{
-					testing.map((tech) => (
-						<li>
-							<Icon
-								name={tech.icon}
-								size={50}
-								style="margin-bottom: 0.25rem; margin: auto;"
-							/>{" "}
-							{tech.name}
-						</li>
-					))
-				}
-			</ul>
-			<h3>Other stuff</h3>
-			<ul class="skills-icons">
-				{
-					otherTechnologies.map((tech) => (
-						<li>
-							<Icon
-								name={tech.icon}
-								size={50}
-								style="margin-bottom: 0.25rem; margin: auto;"
-							/>{" "}
-							{tech.name}
-						</li>
-					))
-				}
-			</ul>
-		</section>
-		<section>
-			<h2 class="animated">side projects</h2>
-			<h3>milkfeed</h3>
-			<p>
-				A minimalistic baby feed-tracking app.
-			</p>
-			<div class="project-screenshots">
-				<button class="project-screenshot-button" type="button">
-					<Image
-						src={milkfeedAppImage}
-						alt="Milkfeed feed-tracking dashboard"
-					/>
-				</button>
-				<button class="project-screenshot-button" type="button">
-					<Image
-						src={milkfeedNightModeImage}
-						alt="Milkfeed dashboard in night mode"
-					/>
-				</button>
-				<button class="project-screenshot-button" type="button">
-					<Image
-						src={milkfeedSharedSessionImage}
-						alt="Milkfeed shared-session invitation screen"
-					/>
-				</button>
-			</div>
-			<h3>perspective</h3>
-			<p>
-				A simple timeline for putting historical events in perspective.
-			</p>
-			<div class="project-screenshots project-screenshots--perspective">
-				<button class="project-screenshot-button" type="button">
-					<Image
-						src={perspectiveDesktopImage}
-						alt="Perspective timeline on a desktop display"
-					/>
-				</button>
-				<button class="project-screenshot-button" type="button">
-					<Image
-						src={perspectiveMobileImage}
-						alt="Perspective timeline on a mobile display"
-					/>
-				</button>
-			</div>
-			<h3>genetictactoe</h3>
-			<p>
-				Naughts and Crosses, using genetic algorithms. 
-			</p>
-			<h2>other skills</h2>
-			<h3>Fluent conversational Japanese</h3>
-			<p>
-				I am, as they say, <i>nihongo jõzu.</i>
-			</p>
-			<h3>lifting heavy objects, repetitively</h3>
-			<p>
-				Moving bits and bytes? Easy. 
-			</p>
-			<p>
-				Moving atoms? <i>Now we're talking.</i>
-			</p>
-		</section>
-	</main>
+	</div>
+
 	<dialog class="screenshot-dialog" aria-label="Expanded project screenshot">
 		<button class="screenshot-dialog-close" type="button" aria-label="Close image">
 			Close
@@ -464,23 +363,19 @@ const pageTitle = "Résumé/CV";
 	import { inView, animate } from "motion";
 
 	function setupAnimations() {
-		inView("section", ({ target }) => {
-			if (target.querySelector(".animated")) {
-				animate(
-					// @ts-ignore
-					target.querySelector(".animated"),
-					{ opacity: 1, transform: "none" },
-					{
-						delay: 0.2,
-						duration: 0.8,
-						easing: [0.17, 0.55, 0.55, 1],
-					},
-				);
-			}
+		inView(".reveal", (info) => {
+			animate(
+				info.target,
+				{ opacity: 1, transform: "none" },
+				{
+					delay: 0.1,
+					duration: 0.8,
+					easing: [0.17, 0.55, 0.55, 1],
+				},
+			);
 		});
 	}
 
-	// hook animations up to View Transitions via after-swap lifecycle hook
 	document.addEventListener("astro:page-load", () => {
 		setupAnimations();
 	});
@@ -516,263 +411,575 @@ const pageTitle = "Résumé/CV";
 </script>
 
 <style>
-	#top-content {
-		border: none;
-	}
-	.cv-container {
-		display: flex;
-		align-items: center;
-		max-width: 750px;
-		margin: auto;
-		padding: 1.5rem;
-		margin-top: 2.2rem;
-	}
-	.cv-container > a {
-		-webkit-transition: all 1s ease;
-		-moz-transition: all 1s ease;
-		-ms-transition: all 1s ease;
-		-o-transition: all 1s ease;
-
-		background-color: var(--color-accent-strong);
-		color: var(--color-on-accent);
-		padding: 0.8rem 1.8rem;
-		border-radius: 12px;
-		font-size: var(--text-lg);
-		text-decoration: none;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-		margin: 0rem 1rem 0rem -3rem;
-		box-shadow: 0 10px 22px 5px #00000073;
-		z-index: 2;
-
-		background-image: linear-gradient(
-			to bottom right,
-			#466eff,
-			rgb(48, 20, 151)
-		);
-	}
-	.cv-container > a:hover {
-		filter: brightness(1.3);
-	}
-	.cv-image {
-		max-width: 120px;
-		height: auto;
-		box-shadow: 0 10px 22px 5px #00000073;
-		border-radius: 4px;
-		transform: rotate(-2.2deg);
-		transition: cubic-bezier(0.23, 1, 0.320, 1) 1.2s;
-		cursor: pointer;
-	}
-	.cv-image:hover {
-		transform: rotate(-5.6deg);
-	}
-	main.wrapper {
-		margin-top: 16rem;
-	}
-	@media (min-width: 1950px) {
-		main.wrapper {
-			margin-top: 42rem;
-		}
-	}
-	@media (max-width: 1050px) {
-		main.wrapper {
-			margin-top: 6rem;
-		}
-	}
-	@media (max-width: 850px) {
-		main.wrapper {
-			margin-top: 2rem;
-		}
-	}
-	.kcl-logo {
-		margin: 2rem 1rem 0.2rem 0rem;
-		box-shadow: 0 10px 22px 5px #00000073;
-		border: 1px solid #ffffff;
-		background: #e22219;
-		border-radius: 6px;
-	}
-	.enki-logo {
-		margin: 2rem 1rem 0.2rem 0rem;
-		box-shadow: 0 10px 22px 5px #00000073;
-		border: 1px solid #1fffa9;
-		border-radius: 6px;
-	}
-	.tails-logo {
-		margin: 2rem 1rem 0.2rem 0rem;
-		box-shadow: 0 10px 22px 5px #00000073;
-		border: 1px solid #5de3fb;
-		border-radius: 6px;
-	}
-	.kraken-logo {
-		margin: 2rem 1rem 0.2rem 0rem;
-		padding: 0rem 0.5rem; 
-		box-shadow: 0 10px 22px 5px #00000073;
-		background: #4b2e4f;
-		border: 1px solid #df1d80;
-		border-radius: 6px;
-	}
-	.kcl-logo,
-	.enki-logo,
-	.tails-logo,
-	.kraken-logo-wrap {
-		margin-bottom: 1rem;
-	}
-	.kraken-logo-wrap {
-		position: relative;
-		flex: 0 0 100px;
-		width: 100px;
-		height: 100px;
-		margin: 2rem 1rem 0.2rem 0rem;
+	.work-bg {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
 		overflow: hidden;
-		border-radius: 6px;
+		pointer-events: none;
 	}
-	.kraken-logo {
+
+	.glow {
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(20px);
+		will-change: transform;
+	}
+
+	.glow-1 {
+		width: 46vw;
+		height: 46vw;
+		top: -14vw;
+		right: -12vw;
+		background: radial-gradient(
+			circle at 38% 38%,
+			rgb(83 97 255 / 0.14),
+			rgb(83 97 255 / 0.05) 45%,
+			transparent 70%
+		);
+		animation: glow-drift-a 30s ease-in-out infinite alternate;
+	}
+
+	.glow-2 {
+		width: 40vw;
+		height: 40vw;
+		top: 32%;
+		left: -16vw;
+		background: radial-gradient(
+			circle at 55% 50%,
+			rgb(139 92 246 / 0.12),
+			rgb(34 211 238 / 0.05) 50%,
+			transparent 72%
+		);
+		animation: glow-drift-b 38s ease-in-out infinite alternate;
+	}
+
+	.glow-3 {
+		width: 36vw;
+		height: 36vw;
+		bottom: -12vw;
+		right: 6vw;
+		background: radial-gradient(
+			circle at 50% 50%,
+			rgb(255 96 190 / 0.09),
+			rgb(255 184 77 / 0.04) 50%,
+			transparent 74%
+		);
+		animation: glow-drift-c 34s ease-in-out infinite alternate;
+	}
+
+	.dot-grid {
+		position: absolute;
+		inset: 0;
+		background-image: radial-gradient(var(--color-text) 1px, transparent 1.3px);
+		background-size: 28px 28px;
+		opacity: 0.05;
+	}
+
+	@keyframes glow-drift-a {
+		from { transform: translate3d(0, 0, 0) scale(1); }
+		to { transform: translate3d(-4vw, 5vh, 0) scale(1.15); }
+	}
+
+	@keyframes glow-drift-b {
+		from { transform: translate3d(0, 0, 0) scale(1); }
+		to { transform: translate3d(5vw, -4vh, 0) scale(1.1); }
+	}
+
+	@keyframes glow-drift-c {
+		from { transform: translate3d(0, 0, 0) scale(1); }
+		to { transform: translate3d(-3vw, -5vh, 0) scale(1.18); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.glow {
+			animation: none;
+		}
+		.reveal {
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	.reveal {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+
+	.work-wrap {
+		max-width: 68rem;
+		margin: 0 auto;
+		padding: 3rem 1.5rem 6rem;
+	}
+
+	/* ---------- hero ---------- */
+
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(240px, 340px) 1fr;
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: center;
+	}
+
+	.hero-media {
+		position: relative;
+	}
+
+	.hero-portrait {
 		display: block;
-		box-sizing: border-box;
 		width: 100%;
-		height: 100%;
+		height: auto;
+		aspect-ratio: 4 / 5;
+		object-fit: cover;
+		border-radius: 14px;
+		border: 1px solid var(--color-border);
+		box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.35);
+	}
+
+	.hero-media-frame {
+		position: absolute;
+		inset: 0;
+		border-radius: 14px;
+		pointer-events: none;
+		transform: translate(14px, 14px);
+		border: 1px solid var(--color-accent);
+		opacity: 0.5;
+		z-index: -1;
+	}
+
+	.hero-copy {
+		max-width: 40rem;
+	}
+
+	.eyebrow {
+		font-family: "IBM Plex Mono", monospace;
+		font-size: var(--text-xs);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		color: var(--color-accent-strong);
+		margin: 0 0 0.75rem;
+	}
+
+	.hero-title {
+		font-family: "IBM Plex Sans", sans-serif;
+		font-weight: 500;
+		font-size: clamp(2.5rem, 6vw, 4.5rem);
+		line-height: 1;
+		letter-spacing: -0.035em;
+		margin: 0 0 1.25rem;
+	}
+
+	.hero-lede {
+		font-size: var(--text-lg);
+		line-height: 1.4;
+		color: var(--color-text-muted);
+		margin: 0 0 1.75rem;
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.7rem 1.5rem;
+		border-radius: 999px;
+		font-family: "IBM Plex Mono", monospace;
+		font-size: var(--text-sm);
+		font-weight: 500;
+		text-decoration: none;
+		transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+	}
+
+	.btn:hover {
+		transform: translateY(-2px);
+	}
+
+	.btn-primary {
+		background: var(--color-accent-strong);
+		color: var(--color-on-accent);
+		box-shadow: 0 12px 30px -12px rgb(0 22 255 / 0.6);
+	}
+
+	.btn-primary:hover {
+		filter: brightness(1.08);
+	}
+
+	.btn-ghost {
+		border: 1px solid var(--color-border);
+		color: var(--color-text);
+	}
+
+	.btn-ghost:hover {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+	}
+
+	/* ---------- sections ---------- */
+
+	.work-section {
+		margin-top: clamp(4rem, 8vw, 7rem);
+	}
+
+	.section-head {
+		display: flex;
+		align-items: baseline;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+
+	.section-num {
+		font-family: "IBM Plex Mono", monospace;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--color-accent-strong);
+	}
+
+	.section-head h2 {
+		font-size: var(--text-xl);
+		font-weight: 500;
+		letter-spacing: -0.03em;
 		margin: 0;
 	}
+
+	.section-head::after {
+		content: "";
+		flex: 1;
+		height: 1px;
+		background: var(--color-border);
+		align-self: center;
+	}
+
+	.section-intro {
+		color: var(--color-text-muted);
+		max-width: 46rem;
+	}
+
+	/* ---------- prose / about ---------- */
+
+	.prose {
+		max-width: 46rem;
+	}
+
+	.prose .lede {
+		font-size: var(--text-lg);
+		line-height: 1.45;
+	}
+
+	.prose p {
+		margin-top: 1rem;
+	}
+
+	.footnote {
+		font-size: var(--text-sm);
+		color: var(--color-text-muted);
+	}
+
+	/* ---------- timeline ---------- */
+
+	.timeline {
+		position: relative;
+	}
+
+	.timeline::before {
+		content: "";
+		position: absolute;
+		left: 0.35rem;
+		top: 0.5rem;
+		bottom: 0.5rem;
+		width: 1px;
+		background: var(--color-border);
+	}
+
+	.timeline-item {
+		position: relative;
+		padding-left: 2.5rem;
+		margin-bottom: 1.75rem;
+	}
+
+	.timeline-item::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 1.4rem;
+		width: 0.7rem;
+		height: 0.7rem;
+		border-radius: 50%;
+		background: var(--color-accent-strong);
+		box-shadow: 0 0 0 4px var(--color-bg);
+	}
+
+	.timeline-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 14px;
+		padding: 1.5rem 1.75rem;
+		transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+	}
+
+	.timeline-card:hover {
+		transform: translateY(-3px);
+		border-color: var(--color-accent);
+		box-shadow: 0 22px 50px -28px rgb(0 22 255 / 0.4);
+	}
+
+	.tl-head {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.tl-logo {
+		flex: 0 0 auto;
+		width: 60px;
+		height: 60px;
+		display: grid;
+		place-items: center;
+		border: 1px solid var(--color-border);
+		border-radius: 12px;
+		background: var(--color-bg);
+		padding: 0.35rem;
+	}
+
+	.tl-logo-img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	.kraken-logo-wrap {
+		position: relative;
+		overflow: hidden;
+		background: #4b2e4f;
+		border-color: #df1d80;
+		padding: 0;
+	}
+
+	.kraken-logo {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
 	.kraken-tentacle {
 		position: absolute;
-		top: 4.1rem;
-		left: -0.3rem;
-		z-index: 1;
-		width: 3rem;
-		height: 3rem;
+		top: 2.1rem;
+		left: -0.15rem;
+		width: 1.9rem;
+		height: 1.9rem;
 		object-fit: contain;
 		pointer-events: none;
 		rotate: -45deg;
 	}
-	.skills-icons {
-		display: flex;
-		flex-wrap: wrap;
-		column-gap: 0.6rem;
-		row-gap: 1.6rem;
-		justify-content: space-evenly;
-		font-weight: 500;
-		text-align: center;
-		padding-inline-start: 0px;
-		justify-content: flex-start;
-		margin-top: 2rem;
-		margin-left: -1rem;
-		font-size: var(--text-sm);
+
+	.tl-title {
+		min-width: 0;
 	}
-	.skills-icons > li {
-		width: 5.2rem;
-		list-style: none;
+
+	.tl-period {
+		display: block;
+		font-family: "IBM Plex Mono", monospace;
+		font-size: var(--text-xs);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-text-muted);
+		margin-bottom: 0.25rem;
 	}
-	main.wrapper.grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-gap: 2rem;
-	}
-	@media (max-width: 1400px) {
-		main.wrapper.grid {
-			grid-template-columns: 1fr;
-		}
-	}
-	section {
-		grid-column: span 1;
-		border-left: 1px var(--color-border);
-		border-left-style: solid;
-		padding-left: 40px;
-		padding-top: 20px;
-	}
-	h2 {
+
+	.tl-title h3 {
 		font-size: var(--text-lg);
-		margin-top: 2rem;
-		margin-bottom: 1rem;
 		font-weight: 600;
-		color: var(--color-accent);
+		line-height: 1.2;
+		margin: 0;
 	}
-	h3 {
-		font-size: var(--text-lg);
-		margin-top: 2rem;
-		margin-bottom: 0.3rem;
-		font-weight: 300;
-		text-decoration: underline;
-	}
-	p {
-		margin-top: 0.8rem;
-	}
-	p > a {
+
+	.tl-company {
+		margin: 0.25rem 0 0;
 		font-size: var(--text-base);
-		font-weight: 800;
 	}
-	strong {
-		font-size: var(--text-lg);
-		font-weight: 600;
-		line-height: 0px;
-	}
-	.timeline-details {
-		margin-top: 1rem;
-	}
-	.timeline-entry {
-		margin-top: 1.4rem;
-	}
-	.timeline-details > h3 {
-		font-size: var(--text-sm);
-		margin-top: 0;
-		margin-bottom: 0rem;
+
+	.tl-company a {
 		font-weight: 600;
 		text-decoration: none;
 	}
-	.flex {
-		align-items: center;
+
+	.tl-company a:hover {
+		text-decoration: underline;
 	}
-	.timeline-details > i {
+
+	.tl-desc {
+		margin-top: 0.9rem;
+		color: var(--color-text-muted);
+	}
+
+	.tl-desc:first-of-type {
+		color: var(--color-text);
+	}
+
+	.tl-desc a {
 		font-weight: 600;
-		color: var(--color-accent);
 	}
-	.stack {
+
+	/* ---------- chips ---------- */
+
+	.chips {
+		list-style: none;
 		display: flex;
 		flex-wrap: wrap;
-		column-gap: 0.4rem;
-		row-gap: 0.8rem;
-		justify-content: space-evenly;
-		font-weight: 500;
-		text-align: center;
-		padding-inline-start: 0px;
-		justify-content: flex-start;
-		margin-top: 1rem;
-		margin-left: -1rem;
-		font-size: var(--text-xs);
+		gap: 0.5rem;
+		margin: 1.1rem 0 0;
+		padding: 0;
 	}
-	.stack > li {
-		width: 5rem;
-		list-style: none;
+
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.35rem 0.75rem;
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		font-size: var(--text-sm);
+		background: var(--color-bg);
+		transition: border-color 0.15s ease, transform 0.15s ease;
 	}
-	.stack > svg {
-		height: 40px;
+
+	.chip:hover {
+		border-color: var(--color-accent);
+		transform: translateY(-1px);
 	}
+
+	.chip :global(svg) {
+		flex: 0 0 auto;
+	}
+
+	/* ---------- skills ---------- */
+
+	.skill-groups {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem 2.5rem;
+		margin-top: 2rem;
+	}
+
+	.skill-group h3 {
+		font-size: var(--text-base);
+		font-weight: 600;
+		margin: 0 0 0.75rem;
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		font-family: "IBM Plex Mono", monospace;
+	}
+
+	.skill-group .chips {
+		margin-top: 0;
+	}
+
+	/* ---------- projects ---------- */
+
+	.projects {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+	}
+
+	.project-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 14px;
+		padding: 1.5rem 1.75rem;
+		transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+	}
+
+	.project-card:hover {
+		transform: translateY(-3px);
+		border-color: var(--color-accent);
+		box-shadow: 0 22px 50px -28px rgb(0 22 255 / 0.4);
+	}
+
+	.project-copy h3 {
+		font-size: var(--text-lg);
+		font-weight: 600;
+		margin: 0 0 0.4rem;
+	}
+
+	.project-copy p {
+		margin: 0;
+		color: var(--color-text-muted);
+	}
+
 	.project-screenshots {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 		gap: 0.75rem;
-		margin-top: 1rem;
+		margin-top: 1.25rem;
 	}
+
 	.project-screenshot-button {
 		padding: 0;
-		border: 0;
+		border: 1px solid var(--color-border);
+		border-radius: 8px;
 		background: transparent;
 		cursor: zoom-in;
+		overflow: hidden;
 	}
+
 	.project-screenshot-button:focus-visible {
 		outline: 2px solid var(--color-accent);
 		outline-offset: 3px;
 	}
+
 	.project-screenshots :global(img) {
 		display: block;
 		width: 100%;
 		height: auto;
-		border-radius: 6px;
+		border-radius: 8px;
+		transition: transform 0.25s ease;
 	}
+
+	.project-screenshot-button:hover :global(img) {
+		transform: scale(1.04);
+	}
+
 	.project-screenshots--perspective {
 		grid-template-columns: 1fr;
 	}
+
 	.project-screenshots--perspective .project-screenshot-button:last-child {
 		max-width: 240px;
 	}
+
+	.extras {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+		margin-top: 1.5rem;
+	}
+
+	.extra {
+		padding: 1.5rem 1.75rem;
+		border-left: 2px solid var(--color-accent);
+	}
+
+	.extra h3 {
+		font-size: var(--text-base);
+		font-weight: 600;
+		margin: 0 0 0.4rem;
+	}
+
+	.extra p {
+		margin: 0;
+		color: var(--color-text-muted);
+	}
+
+	/* ---------- screenshot dialog ---------- */
+
 	.screenshot-dialog {
 		display: none;
 		inset: 0;
@@ -785,20 +992,24 @@ const pageTitle = "Résumé/CV";
 		padding: 0;
 		border: 1px solid var(--color-border);
 		border-radius: 6px;
-		background: var(--color-background);
+		background: var(--color-background, var(--color-surface));
 	}
+
 	.screenshot-dialog[open] {
 		display: grid;
 	}
+
 	.screenshot-dialog::backdrop {
 		background: rgb(0 0 0 / 0.75);
 	}
+
 	.screenshot-dialog-image {
 		display: block;
 		max-width: min(calc(100vw - 2rem), 1100px);
 		max-height: calc(100dvh - 4rem);
 		object-fit: contain;
 	}
+
 	.screenshot-dialog-close {
 		position: absolute;
 		top: 0.5rem;
@@ -806,11 +1017,59 @@ const pageTitle = "Résumé/CV";
 		padding: 0.4rem 0.65rem;
 		border: 1px solid var(--color-border);
 		border-radius: 4px;
-		background: var(--color-background);
+		background: var(--color-surface);
 		color: var(--color-text);
 		cursor: pointer;
 	}
-	html.dark > body > main.wrapper.grid > section {
-		border-color: var(--color-border);
+
+	/* ---------- responsive ---------- */
+
+	@media (max-width: 860px) {
+		.hero {
+			grid-template-columns: 1fr;
+		}
+
+		.hero-media {
+			max-width: 320px;
+		}
+
+		.skill-groups,
+		.projects,
+		.extras {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.work-wrap {
+			padding: 1.75rem 1.1rem 4rem;
+		}
+
+		.hero-media {
+			max-width: 240px;
+			margin: 0 auto;
+		}
+
+		.hero-copy {
+			text-align: center;
+		}
+
+		.hero-actions {
+			justify-content: center;
+		}
+
+		.timeline-card {
+			padding: 1.25rem 1.1rem;
+		}
+
+		.tl-head {
+			align-items: flex-start;
+			gap: 0.9rem;
+		}
+
+		.tl-logo {
+			width: 48px;
+			height: 48px;
+		}
 	}
 </style>
