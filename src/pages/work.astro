@@ -4,6 +4,7 @@ import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
 import stefanImage from "../assets/stefan.jpg";
+import cvImage from "../assets/cv.png";
 import enkiLogo from "../assets/enki_logo.jpg";
 import tailsLogo from "../assets/tails_logo.png";
 import krakenLogo from "../assets/krakentech_logo.svg";
@@ -59,6 +60,15 @@ const skills = [
 					class="hero-portrait"
 					quality="mid"
 				/>
+				<a class="cv-card" href={cvUrl} aria-label="View my CV">
+					<Image
+						src={cvImage}
+						alt="Preview of my CV"
+						class="cv-thumb"
+						quality="low"
+					/>
+					<span class="cv-card-label">cv ↗</span>
+				</a>
 				<span class="hero-media-frame" aria-hidden="true"></span>
 			</div>
 			<div class="hero-copy">
@@ -545,6 +555,44 @@ const skills = [
 		border: 1px solid var(--color-accent);
 		opacity: 0.5;
 		z-index: -1;
+	}
+
+	.cv-card {
+		position: absolute;
+		right: -1.25rem;
+		bottom: -1.25rem;
+		width: 118px;
+		display: block;
+		padding: 0.4rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 10px;
+		box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.45);
+		transform: rotate(3deg);
+		transition: transform 0.2s ease;
+		text-decoration: none;
+	}
+
+	.cv-card:hover {
+		transform: rotate(0deg) translateY(-3px);
+	}
+
+	.cv-thumb {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 6px;
+	}
+
+	.cv-card-label {
+		display: block;
+		text-align: center;
+		padding-top: 0.3rem;
+		font-family: "IBM Plex Mono", monospace;
+		font-size: var(--text-xs);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-text-muted);
 	}
 
 	.hero-copy {
@@ -1066,6 +1114,12 @@ const skills = [
 		.hero-media {
 			max-width: 240px;
 			margin: 0 auto;
+		}
+
+		.cv-card {
+			width: 92px;
+			right: -0.75rem;
+			bottom: -0.75rem;
 		}
 
 		.hero-copy {
