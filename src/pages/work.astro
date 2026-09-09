@@ -155,7 +155,7 @@ const skills = [
 				<article class="timeline-item">
 					<div class="timeline-card">
 						<div class="tl-head">
-							<div class="tl-logo">
+							<div class="tl-logo tl-logo--tails">
 								<Image src={tailsLogo} alt="tails.com logo" class="tl-logo-img tails-logo" width="100" height="100" />
 							</div>
 							<div class="tl-title">
@@ -193,7 +193,7 @@ const skills = [
 				<article class="timeline-item">
 					<div class="timeline-card">
 						<div class="tl-head">
-							<div class="tl-logo">
+							<div class="tl-logo tl-logo--enki">
 								<Image src={enkiLogo} alt="Enki Labs logo" class="tl-logo-img enki-logo" width="100" height="100" />
 							</div>
 							<div class="tl-title">
@@ -228,7 +228,7 @@ const skills = [
 				<article class="timeline-item">
 					<div class="timeline-card">
 						<div class="tl-head">
-							<div class="tl-logo">
+							<div class="tl-logo tl-logo--kcl">
 								<Image src={kclLogo} alt="King's College London logo" class="tl-logo-img kcl-logo" width="100" height="100" />
 							</div>
 							<div class="tl-title">
@@ -742,14 +742,32 @@ const skills = [
 		place-items: center;
 		border: 1px solid var(--color-border);
 		border-radius: 12px;
-		background: var(--color-bg);
+		background: #ffffff;
+		padding: 0;
+		overflow: hidden;
+	}
+
+	.tl-logo--tails {
+		background: #ffffff;
+	}
+
+	.tl-logo--enki {
+		background: #ffffff;
+	}
+
+	.tl-logo--kcl {
+		background: #e2231a;
 		padding: 0.35rem;
+	}
+
+	.tl-logo--kcl .tl-logo-img {
+		object-fit: contain;
 	}
 
 	.tl-logo-img {
 		width: 100%;
 		height: 100%;
-		object-fit: contain;
+		object-fit: cover;
 	}
 
 	.kraken-logo-wrap {
