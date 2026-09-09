@@ -7,7 +7,10 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "generate:palettes": "tsx scripts/build-palette-bank.ts",
+    "predev": "npm run generate:palettes",
+    "prebuild": "npm run generate:palettes"
   },
   "dependencies": {
     "@astrojs/check": "^0.4.1",
