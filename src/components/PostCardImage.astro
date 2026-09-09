@@ -5,12 +5,16 @@ import type { CollectionEntry } from "astro:content";
 interface Props {
   post: CollectionEntry<"posts">;
   base: string;
+  variant?: "card" | "hero";
 }
 
-const { post, base } = Astro.props;
+const { post, base, variant = "card" } = Astro.props;
 const image = post.data.image;
 const alt = post.data.imageAlt ?? post.data.title;
-const fallbackSrc = `${base}generated/art/${post.slug}-card.png`;
+const suffix = variant === "hero" ? "-hero" : "-card";
+const fallbackSrc = `${base}generated/art/${post.slug}${suffix}.png`;
+const className =
+  variant === "hero" ? "post-index-hero-image" : "post-index-card-image";
 ---
 
 {
@@ -18,14 +22,14 @@ const fallbackSrc = `${base}generated/art/${post.slug}-card.png`;
     <Image
       src={image}
       alt={alt}
-      class="post-index-card-image"
+      class={className}
       onload="this.style.opacity=1; this.style.filter='grayscale(0)'"
     />
   ) : (
     <img
       src={fallbackSrc}
       alt={alt}
-      class="post-index-card-image"
+      class={className}
       onload="this.style.opacity=1; this.style.filter='grayscale(0)'"
     />
   )
