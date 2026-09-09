@@ -41,7 +41,7 @@ vec3 blobPos(int i, float t) {
 }
 
 float blobRadius(int i) {
-  return 0.28 + 0.34 * hash(float(i) * 7.1);
+  return 0.33 + 0.5 * hash(float(i) * 7.1);
 }
 
 float map(vec3 p, float t) {
@@ -72,22 +72,27 @@ void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
   float t = u_time;
 
-  float sc = clamp(u_scroll / 600.0, 0.0, 1.5);
+  float sc = clamp(u_scroll / 900.0, 0.0, 1.5);
+  float orbit = sc * 1.5;
+  float radius = 3.5 - sc * 1.2;
   vec3 ro = vec3(
-    sin(t * 0.08) * 0.6 + sc * 0.9,
-    cos(t * 0.06) * 0.4 - sc * 0.6,
-    -3.5 + sc * 1.6
+    sin(orbit) * radius + sin(t * 0.08) * 1.5,
+    cos(t * 0.06) * 0.4,
+    -cos(orbit) * radius
   );
-  vec3 rd = normalize(vec3(uv, 1.5));
+  vec3 forward = normalize(-ro);
+  vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
+  vec3 up = cross(forward, right);
+  vec3 rd = normalize(forward * 1.5 + right * uv.x + up * uv.y);
 
-  float CELL = 0.2;
+  float CELL = 0.16;
   float thresh = 1.2;
   vec3 col = vec3(0.0);
   float trans = 1.0;
 
   float jitter = hash(gl_FragCoord.x * 13.71 + gl_FragCoord.y * 7.93);
   vec3 p = ro + rd * jitter * CELL;
-  for (int s = 0; s < 80; s++) {
+  for (int s = 0; s < 100; s++) {
     vec3 q = floor(p / CELL) * CELL + 0.5 * CELL;
     float f = map(q, t);
     float density = smoothstep(thresh, thresh + 1.0, f);
