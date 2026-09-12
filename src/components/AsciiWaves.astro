@@ -43,6 +43,7 @@
   let charH = 16;
   let rafId = 0;
   let lastUpdate = 0;
+  let resizeRaf = 0;
 
   function measureCell() {
     if (!grid) return;
@@ -171,9 +172,14 @@
 
   window.addEventListener("resize", () => {
     if (!grid) return;
-    computeSize();
-    render(0);
-    scheduleMask();
+    if (resizeRaf) cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = 0;
+      if (!grid) return;
+      computeSize();
+      render(performance.now() / 1000);
+      scheduleMask();
+    });
   });
 
   document.addEventListener("astro:page-load", init);
@@ -181,7 +187,7 @@
   document.fonts.ready.then(() => {
     if (!grid) return;
     computeSize();
-    render(0);
+    render(performance.now() / 1000);
     scheduleMask();
   });
 
