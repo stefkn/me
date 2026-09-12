@@ -1,0 +1,189 @@
+<div class="ascii-waves" aria-hidden="true">
+  <pre class="ascii-waves-grid"></pre>
+</div>
+
+<style>
+  .ascii-waves {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .ascii-waves-grid {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-ligatures: none;
+    white-space: pre;
+    color: var(--color-text);
+    opacity: 0.5;
+  }
+</style>
+
+<script>
+  const RAMP = [" ", "·", "·", ".", "-", "~", "≈", "≈"];
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  let grid: HTMLPreElement | null = null;
+  let cols = 0;
+  let rows = 0;
+  let charW = 8;
+  let charH = 16;
+  let rafId = 0;
+  let lastUpdate = 0;
+
+  function measureCell() {
+    if (!grid) return;
+    const cs = getComputedStyle(grid);
+    const probe = document.createElement("span");
+    probe.style.fontFamily = cs.fontFamily;
+    probe.style.fontSize = cs.fontSize;
+    probe.style.fontWeight = cs.fontWeight;
+    probe.style.letterSpacing = cs.letterSpacing;
+    probe.style.lineHeight = cs.lineHeight;
+    probe.style.fontVariantLigatures = "none";
+    probe.style.position = "absolute";
+    probe.style.visibility = "hidden";
+    probe.style.whiteSpace = "pre";
+    probe.textContent = "MMMMMMMMMM";
+    document.body.appendChild(probe);
+    charW = probe.getBoundingClientRect().width / 10;
+    probe.textContent = "M\nM";
+    charH = probe.getBoundingClientRect().height / 2;
+    document.body.removeChild(probe);
+  }
+
+  function computeSize() {
+    measureCell();
+    cols = Math.ceil(window.innerWidth / charW) + 1;
+    rows = Math.ceil(window.innerHeight / charH) + 1;
+  }
+
+  function waveHeight(x: number, y: number, t: number) {
+    return (
+      Math.sin(x * 0.32 + t * 1.05) +
+      Math.cos(y * 0.38 - t * 0.75) +
+      Math.sin((x + y) * 0.2 + t * 0.5)
+    ) / 3;
+  }
+
+  function render(t: number) {
+    if (!grid) return;
+    const lines: string[] = [];
+    for (let y = 0; y < rows; y++) {
+      let line = "";
+      for (let x = 0; x < cols; x++) {
+        const h = waveHeight(x, y, t);
+        const v = Math.min(1, Math.max(-1, h * 1.8));
+        let idx = Math.floor((v * 0.5 + 0.5) * RAMP.length);
+        if (idx < 0) idx = 0;
+        if (idx >= RAMP.length) idx = RAMP.length - 1;
+        line += RAMP[idx];
+      }
+      lines.push(line);
+    }
+    grid.textContent = lines.join("\n");
+  }
+
+  function updateMask() {
+    const container = document.querySelector<HTMLElement>(".ascii-waves");
+    if (!container) return;
+
+    const target =
+      document.querySelector<HTMLElement>("pre.background-ascii") ??
+      document.querySelector<HTMLElement>(".scene");
+
+    if (!target) {
+      container.style.webkitMaskImage = "";
+      container.style.maskImage = "";
+      return;
+    }
+
+    const rect = target.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const rx = rect.width / 2;
+    const ry = rect.height / 2;
+
+    const mask =
+      `radial-gradient(ellipse ${rx}px ${ry}px at ${cx}px ${cy}px,` +
+      ` transparent 0%, transparent 48%, rgba(0,0,0,0.4) 70%, black 92%)`;
+
+    container.style.webkitMaskImage = mask;
+    container.style.maskImage = mask;
+  }
+
+  function scheduleMask() {
+    requestAnimationFrame(() => requestAnimationFrame(updateMask));
+  }
+
+  function loop(now: number) {
+    if (!grid) {
+      rafId = 0;
+      return;
+    }
+    rafId = requestAnimationFrame(loop);
+    if (now - lastUpdate < 50) return;
+    lastUpdate = now;
+    render(now / 1000);
+  }
+
+  function init() {
+    const next = document.querySelector<HTMLPreElement>(".ascii-waves-grid");
+    if (!next) {
+      grid = null;
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      return;
+    }
+    grid = next;
+    computeSize();
+    scheduleMask();
+
+    if (reducedMotion) {
+      render(0);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      return;
+    }
+
+    lastUpdate = 0;
+    if (!rafId) rafId = requestAnimationFrame(loop);
+  }
+
+  window.addEventListener("resize", () => {
+    if (!grid) return;
+    computeSize();
+    render(0);
+    scheduleMask();
+  });
+
+  document.addEventListener("astro:page-load", init);
+
+  document.fonts.ready.then(() => {
+    if (!grid) return;
+    computeSize();
+    render(0);
+    scheduleMask();
+  });
+
+  init();
+</script>
