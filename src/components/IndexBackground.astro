@@ -118,6 +118,12 @@
         border-width: 2px;
         border-left-style: solid;
     }
+    .scene {
+        transition: opacity 0.4s ease;
+    }
+    .scene.is-scrolled {
+        opacity: 0.4;
+    }
 </style>
 
 <script>
@@ -251,6 +257,7 @@
         renderGame();
 
         document.getElementById("background")?.classList.add("playing");
+        updateFocusEffects();
     }
 
     function move(key: string, user = true) {
@@ -300,6 +307,7 @@
             }
             gameStarted = false;
             document.getElementById("background")?.classList.remove("playing");
+            updateFocusEffects();
         }
     }
 
@@ -378,6 +386,24 @@
     document.addEventListener("astro:page-load", bindControls);
 
     bindControls();
+
+    function updateFocusEffects() {
+        if (!isTouchDevice) return;
+
+        const scene = document.querySelector<HTMLElement>(".scene");
+        if (!scene) return;
+
+        const scrolled = window.scrollY > 40;
+        const gameFocused = gameStarted && !scrolled;
+
+        document.body.classList.toggle("snake-focus", gameFocused);
+        scene.classList.toggle("is-scrolled", scrolled);
+    }
+
+    window.addEventListener("scroll", updateFocusEffects, { passive: true });
+    document.addEventListener("astro:page-load", updateFocusEffects);
+
+    updateFocusEffects();
 
     function fitScene() {
         const scene = document.querySelector<HTMLElement>(".scene");

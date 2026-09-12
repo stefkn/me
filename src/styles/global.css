@@ -50,6 +50,23 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Darken the page content while the snake game has focus. */
+.index-card-contents::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+body.snake-focus .index-card-contents::after {
+  opacity: 1;
+}
+
 .index-intro-image,
 .work-intro-image {
   -webkit-transition: all 3s ease;
