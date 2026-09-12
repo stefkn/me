@@ -43,9 +43,8 @@
   transform: translateX(-100px);
 }
 
-/* While the snake game is running, block scroll/zoom so swipes steer it. */
+/* While the snake game is running, block scroll/zoom in the game area so swipes steer it. */
 #background.playing {
-  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;

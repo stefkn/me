@@ -168,6 +168,7 @@
 
     let touchStartX = 0;
     let touchStartY = 0;
+    let touchInGameArea = false;
 
     function setCharAt(str: string, index: number, chr: string) {
         if (index > str.length - 1) return str;
@@ -316,15 +317,18 @@
         const touch = e.touches[0];
         touchStartX = touch.clientX;
         touchStartY = touch.clientY;
+        touchInGameArea = touch.clientY < window.innerHeight / 2;
     }
 
     function onTouchMove(e: TouchEvent) {
-        if (gameStarted) {
+        if (gameStarted && touchInGameArea) {
             e.preventDefault();
         }
     }
 
     function onTouchEnd(e: TouchEvent) {
+        if (!touchInGameArea) return;
+
         const touch = e.changedTouches[0];
         const dx = touch.clientX - touchStartX;
         const dy = touch.clientY - touchStartY;
