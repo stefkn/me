@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 import icon from "astro-icon";
+import mailObfuscation from "astro-mail-obfuscation";
 import generateArt from './src/integrations/generateArt';
 
 // https://astro.build/config
@@ -26,5 +27,5 @@ export default defineConfig({
       transformers: []
     }
   },
-  integrations: [icon(), generateArt()]
+  integrations: [icon(), generateArt(), mailObfuscation()]
 });
