@@ -82,6 +82,16 @@ const skills = [
 				<div class="hero-actions">
 					<a class="btn btn-primary" href={cvUrl}>view cv</a>
 					<a class="btn btn-ghost" href="https://github.com/stefkn">github</a>
+					<button class="btn btn-ghost" id="contact-me" type="button">contact me</button>
+				</div>
+				<div class="contact-reveal" id="contact-reveal" hidden>
+					<a
+						class="contact-email"
+						href="mailto:stefan.k.nowak@gmail.com"
+						data-obfuscation
+					>
+						<span>stefan.k.nowak@gmail.com</span>
+					</a>
 				</div>
 			</div>
 		</header>
@@ -431,6 +441,21 @@ const skills = [
 
 	document.addEventListener("astro:page-load", setupScreenshotZoom);
 	setupScreenshotZoom();
+
+	function setupContactReveal() {
+		const button = document.querySelector<HTMLButtonElement>("#contact-me");
+		const reveal = document.querySelector<HTMLDivElement>("#contact-reveal");
+
+		if (!button || !reveal) return;
+
+		button.onclick = () => {
+			reveal.hidden = false;
+			button.hidden = true;
+		};
+	}
+
+	document.addEventListener("astro:page-load", setupContactReveal);
+	setupContactReveal();
 </script>
 
 <style>
@@ -654,6 +679,10 @@ const skills = [
 		font-size: var(--text-sm);
 		font-weight: 500;
 		text-decoration: none;
+		cursor: pointer;
+		appearance: none;
+		background: transparent;
+		color: var(--color-text);
 		transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 	}
 
@@ -679,6 +708,26 @@ const skills = [
 	.btn-ghost:hover {
 		border-color: var(--color-accent);
 		color: var(--color-accent);
+	}
+
+	.contact-reveal {
+		margin-top: 0.75rem;
+	}
+
+	.contact-email {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-family: "IBM Plex Mono", monospace;
+		font-size: var(--text-sm);
+		color: var(--color-accent);
+		text-decoration: none;
+		border-bottom: 1px dashed var(--color-accent);
+	}
+
+	.contact-email:hover {
+		color: var(--color-accent-strong);
+		border-bottom-style: solid;
 	}
 
 	/* ---------- sections ---------- */
