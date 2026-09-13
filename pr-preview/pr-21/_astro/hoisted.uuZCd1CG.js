@@ -1,0 +1,1 @@
+import{i as e,a as i}from"./animate.es.Rr-s7MX2.js";import"./ViewTransitions.astro_astro_type_script_index_0_lang.T1cABFxu.js";import"./index.PDhEm6KS.js";function a(){e(".reveal",t=>{i(t.target,{opacity:1,transform:"none"},{delay:.1,duration:.8,easing:[.17,.55,.55,1]})})}document.addEventListener("astro:page-load",()=>{a()});a();
