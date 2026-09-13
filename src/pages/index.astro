@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import IndexBackground from "../components/IndexBackground.astro";
-import AsciiWaves from "../components/AsciiWaves.astro";
 import RecentPosts from "../components/RecentPosts.astro";
 import siteConfig from "../site-config";
 
@@ -14,7 +13,6 @@ const wordmarkSuffix = wordmark.slice(wordmark.indexOf("."));
 ---
 
 <Layout title="Introduction">
-	<AsciiWaves />
 	<div class="big-text-container">
 		<h1 id="big-text" class="index-header ibm-plex-sans-regular">
 			{wordmarkMain}
@@ -123,11 +121,9 @@ const wordmarkSuffix = wordmark.slice(wordmark.indexOf("."));
 		color: #0800ff;
 	}
 	#big-text {
-		letter-spacing: -135px;
+		letter-spacing: 8px;
 		font-weight: 500;
 		color: #0800ff;
-		font-style: italic;
-		font-size: 112rem;
 	}
 	#big-text-2 {
 		letter-spacing: -0.02em;
