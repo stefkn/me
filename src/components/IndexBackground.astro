@@ -118,6 +118,12 @@
         border-width: 2px;
         border-left-style: solid;
     }
+    .scene {
+        transition: opacity 0.4s ease;
+    }
+    .scene.is-scrolled {
+        opacity: 0.4;
+    }
 </style>
 
 <script>
@@ -168,6 +174,7 @@
 
     let touchStartX = 0;
     let touchStartY = 0;
+    let touchInGameArea = false;
 
     function setCharAt(str: string, index: number, chr: string) {
         if (index > str.length - 1) return str;
@@ -250,6 +257,7 @@
         renderGame();
 
         document.getElementById("background")?.classList.add("playing");
+        updateFocusEffects();
     }
 
     function move(key: string, user = true) {
@@ -299,6 +307,7 @@
             }
             gameStarted = false;
             document.getElementById("background")?.classList.remove("playing");
+            updateFocusEffects();
         }
     }
 
@@ -316,15 +325,18 @@
         const touch = e.touches[0];
         touchStartX = touch.clientX;
         touchStartY = touch.clientY;
+        touchInGameArea = touch.clientY < window.innerHeight / 2;
     }
 
     function onTouchMove(e: TouchEvent) {
-        if (gameStarted) {
+        if (gameStarted && touchInGameArea) {
             e.preventDefault();
         }
     }
 
     function onTouchEnd(e: TouchEvent) {
+        if (!touchInGameArea) return;
+
         const touch = e.changedTouches[0];
         const dx = touch.clientX - touchStartX;
         const dy = touch.clientY - touchStartY;
@@ -374,6 +386,24 @@
     document.addEventListener("astro:page-load", bindControls);
 
     bindControls();
+
+    function updateFocusEffects() {
+        if (!isTouchDevice) return;
+
+        const scene = document.querySelector<HTMLElement>(".scene");
+        if (!scene) return;
+
+        const scrolled = window.scrollY > 40;
+        const gameFocused = gameStarted && !scrolled;
+
+        document.body.classList.toggle("snake-focus", gameFocused);
+        scene.classList.toggle("is-scrolled", scrolled);
+    }
+
+    window.addEventListener("scroll", updateFocusEffects, { passive: true });
+    document.addEventListener("astro:page-load", updateFocusEffects);
+
+    updateFocusEffects();
 
     function fitScene() {
         const scene = document.querySelector<HTMLElement>(".scene");
