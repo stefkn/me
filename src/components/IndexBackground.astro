@@ -37,7 +37,7 @@
               *Bb.   `!!8 ::BBfT|!^"'
                 *Bb.   `!!8|!^"'
                   *Bb.   ""
-                    *Bb.
+                    *Bb.<span id="hdd-led" class="hdd-led" aria-hidden="true"></span>
     </pre>
     <div class="screen-content">
         <span id="game"></span>
@@ -54,7 +54,42 @@
         width: 150%;
         height: 150%;
     }
-
+    .hdd-led {
+        position: absolute;
+        left: 44.5ch;
+        top: calc(15.5 * 10.2px);
+        width: 0.22rem;
+        height: 0.22rem;
+        border-radius: 50%;
+        background: #5a1512;
+        box-shadow: 0 0 0 0 rgba(255, 64, 48, 0);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        transition:
+            background 0.08s linear,
+            box-shadow 0.08s linear;
+    }
+    .hdd-led.is-active {
+        background: #ff4030;
+        box-shadow: 0 0 0.3rem 0.06rem rgba(255, 64, 48, 0.9);
+    }
+    .hdd-led.is-busy {
+        animation: hdd-blink 0.14s steps(1, end) infinite;
+    }
+    @keyframes hdd-blink {
+        0% {
+            background: #ff4030;
+            box-shadow: 0 0 0.3rem 0.06rem rgba(255, 64, 48, 0.9);
+        }
+        50% {
+            background: #5a1512;
+            box-shadow: 0 0 0 0 rgba(255, 64, 48, 0);
+        }
+        100% {
+            background: #ff4030;
+            box-shadow: 0 0 0.3rem 0.06rem rgba(255, 64, 48, 0.9);
+        }
+    }
     pre.background-ascii {
         -webkit-transform: scale(1.5);
         font-family: "IBM Plex Mono", monospace;
@@ -147,6 +182,7 @@
     let bootCancelled = false;
     let bootedEl: HTMLElement | null = null;
     let desktopHovered = false;
+    let ledIdleTimer: ReturnType<typeof setTimeout> | null = null;
 
     let gameStarted = false;
     let grid = makeGrid();
@@ -264,6 +300,7 @@
         screenRows = new Array(ROWS).fill("");
         renderScreen();
         el.style.display = "block";
+        setLedBusy(true);
 
         const steps: Array<() => Promise<void> | void> = [
             () => typeLine("SBIOS V1.0"),
@@ -295,6 +332,33 @@
         if (mode !== MODE.BOOT) return;
         bootCancelled = true;
         goToMenu();
+    }
+
+    // ---------- HDD activity LED ----------
+
+    function setLedBusy(busy: boolean) {
+        const led = document.getElementById("hdd-led");
+        if (!led) return;
+        led.classList.toggle("is-busy", busy);
+        if (busy && ledIdleTimer) {
+            clearTimeout(ledIdleTimer);
+            ledIdleTimer = null;
+        }
+    }
+
+    function ledBlip(ms = 90) {
+        const led = document.getElementById("hdd-led");
+        if (!led) return;
+        led.classList.add("is-active");
+        setTimeout(() => led.classList.remove("is-active"), ms);
+    }
+
+    function scheduleLedIdle() {
+        if (ledIdleTimer) clearTimeout(ledIdleTimer);
+        ledIdleTimer = setTimeout(() => {
+            ledBlip(60 + Math.random() * 90);
+            scheduleLedIdle();
+        }, 1500 + Math.random() * 4500);
     }
 
     // ---------- app menu ----------
@@ -331,17 +395,22 @@
         mode = MODE.MENU;
         selectedApp = 0;
         renderMenu();
+        setLedBusy(false);
+        ledBlip(140);
+        scheduleLedIdle();
     }
 
     function menuMove(dir: number) {
         if (mode !== MODE.MENU) return;
         selectedApp = (selectedApp + dir + APPS.length) % APPS.length;
         renderMenu();
+        ledBlip(45);
     }
 
     function menuOpen() {
         if (mode !== MODE.MENU) return;
         const app = APPS[selectedApp];
+        ledBlip(120);
         if (app.id === "snake") startGame();
         else openInfo(app.id);
     }
@@ -740,6 +809,10 @@
         if (playerMoveInterval) {
             clearInterval(playerMoveInterval);
             playerMoveInterval = null;
+        }
+        if (ledIdleTimer) {
+            clearTimeout(ledIdleTimer);
+            ledIdleTimer = null;
         }
     });
 
