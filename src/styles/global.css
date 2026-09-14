@@ -164,7 +164,10 @@ main.wrapper>.full-bleed {
 
 .nav-links {
   position: relative;
-  left: 1rem;
+  /* Keep the links clear of the fixed top-left site icon whenever the nav
+     bar is narrower than the viewport, but let them hug the content column
+     (--nav-max-width) once there is room for the icon beside it. */
+  left: min(4rem, max(1rem, calc(4rem - (100vw - var(--nav-max-width, 68rem)) / 2)));
   display: flex;
   align-items: center;
   font-size: var(--text-lg);
@@ -172,13 +175,6 @@ main.wrapper>.full-bleed {
   a {
     margin: 0rem 0.33rem;
     color: var(--color-accent);
-  }
-
-}
-
-@media (max-width: 830px) {
-  .nav-links {
-    left: 4rem;
   }
 }
 
