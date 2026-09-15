@@ -13,6 +13,8 @@ export type Props = {
 	description?: string;
 	image?: { src: string; alt?: string };
 	pageType?: "website" | "article";
+	/** Max-width of the page's content column, used to align the sticky nav. */
+	navMaxWidth?: string;
 };
 
 // get props data
@@ -21,6 +23,7 @@ const {
 	title = siteConfig.title,
 	pageType = siteConfig.pageType,
 	image = siteConfig.image,
+	navMaxWidth = "68rem",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.request.url, Astro.site);
@@ -142,7 +145,7 @@ function formatCanonicalURL(url: string | URL) {
 		<ViewTransitions />
 	</head>
 
-	<body>
+	<body style={`--nav-max-width: ${navMaxWidth}`}>
 		<a id="main-icon-link" href={base}>
 			<img id="site-icon" src={base + "favicon.png"} />
 		</a>
@@ -217,7 +220,7 @@ function formatCanonicalURL(url: string | URL) {
 			display: flex;
 			justify-content: space-between;
 			padding: 1rem;
-			max-width: 750px;
+			max-width: var(--nav-max-width, 68rem);
 			margin: auto;
 			z-index: 10;
 			transition: transform 0.3s ease;
