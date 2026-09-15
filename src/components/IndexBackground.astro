@@ -37,33 +37,67 @@
               *Bb.   `!!8 ::BBfT|!^"'
                 *Bb.   `!!8|!^"'
                   *Bb.   ""
-                    *Bb.
+                    *Bb.<span id="hdd-led" class="hdd-led" aria-hidden="true">@</span>
     </pre>
     <div class="screen-content">
-        <p id="screentext" class="on-screen-text" style="display: none"></p>
-        <p id="screentext2" class="on-screen-text"> press 'g' to play</p>
         <span id="game"></span>
     </div>
     </div>
 </div>
 
 <style>
-    .on-screen-text {
-        height: 6rem;
-        font-family: "IBM Plex Mono", monospace;
-        font-weight: 600;
-        font-size: 0.4rem;
-        position: absolute;
-        transform: skew(0deg, -15deg);
-        -webkit-transform: skew(0deg, -15deg);
-    }
     .screen-content {
         position: relative;
         display: block;
-        top: -24.5rem;
-        left: 19rem;
+        top: -24.75rem;
+        left: 18.7rem;
         width: 150%;
         height: 150%;
+    }
+    .hdd-led {
+        position: absolute;
+        left: 65.5ch;
+        top: calc(15.5 * 12.7px);
+        transform: translate(-50%, -35%);
+        font-family: inherit;
+        font-weight: 700;
+        font-size: inherit;
+        line-height: 1;
+        color: #1c4d24;
+        pointer-events: none;
+        transition:
+            color 0.08s linear,
+            text-shadow 0.08s linear;
+        box-shadow: inset #13151b 0px 3px 3px 6px;
+    }
+    .hdd-led.is-active {
+        color: #3dff72;
+        text-shadow: 0 0 0.25rem rgba(63, 255, 110, 0.85);
+    }
+    .hdd-led.is-busy {
+        animation: hdd-blink 0.36s steps(1, end) infinite;
+    }
+    @keyframes hdd-blink {
+        0% {
+            color: #d2ffdb;
+            text-shadow: 0 0 0.3rem rgba(63, 255, 110, 0.9);
+        }
+        25% {
+            color: #6ff59a;
+            text-shadow: 0 0 0.18rem rgba(63, 255, 110, 0.6);
+        }
+        55% {
+            color: #2e9c4a;
+            text-shadow: 0 0 0.08rem rgba(63, 255, 110, 0.35);
+        }
+        80% {
+            color: #1c4d24;
+            text-shadow: none;
+        }
+        100% {
+            color: #d2ffdb;
+            text-shadow: 0 0 0.3rem rgba(63, 255, 110, 0.9);
+        }
     }
     pre.background-ascii {
         -webkit-transform: scale(1.5);
@@ -103,9 +137,6 @@
         .scene {
             transform-origin: top center;
         }
-        .on-screen-text {
-            font-size: 1rem;
-        }
     }
     @media screen and (min-width: 1200px) {
         .background {
@@ -127,40 +158,39 @@
 </style>
 
 <script>
-    const snake = "0";
+    const snakeChar = "0";
     const food = ".";
     const lineText = "██████████████████ ";
+    const COLS = 19;
+    const ROWS = 9;
 
     const isTouchDevice =
         "ontouchstart" in window || navigator.maxTouchPoints > 0;
     const moveHint = isTouchDevice
         ? ["SWIPE", "TO", "MOVE"]
-        : ["USE", "WASD", "TO", "MOVE"];
+        : ["WASD", "OR", "ARROWS"];
     const hintRow = ("█" + moveHint.join("█") + "█").padEnd(18, "█") + " ";
 
-    function makeGrid() {
-        return lineText.repeat(4) + hintRow + lineText.repeat(4);
-    }
+    const MODE = {
+        BOOT: "boot",
+        MENU: "menu",
+        SNAKE: "snake",
+        INFO: "info",
+    } as const;
+    type Mode = (typeof MODE)[keyof typeof MODE];
 
-    const COLS = 19;
-    const ROWS = 9;
+    const APPS = [
+        { id: "snake", label: "SNAKE" },
+        { id: "about", label: "ABOUT" },
+        { id: "posts", label: "POSTS" },
+    ] as const;
 
-    function renderGame() {
-        const { gameElem } = getElements();
-        const rows: Array<string> = [];
-        for (let r = 0; r < ROWS; r++) {
-            rows.push(grid.slice(r * COLS, (r + 1) * COLS));
-        }
-        gameElem!.textContent = rows.join("\n");
-    }
-
-    function getElements() {
-        return {
-            gameElem: document.getElementById("game"),
-            screenText: document.getElementById("screentext"),
-            screenText2: document.getElementById("screentext2"),
-        };
-    }
+    let mode: Mode = MODE.BOOT;
+    let selectedApp = 0;
+    let screenRows: Array<string> = new Array(ROWS).fill("");
+    let bootCancelled = false;
+    let bootedEl: HTMLElement | null = null;
+    let ledIdleTimer: ReturnType<typeof setTimeout> | null = null;
 
     let gameStarted = false;
     let grid = makeGrid();
@@ -169,18 +199,260 @@
     let foodPosition = -1;
     let snakeLen = 12;
     let snakeSpeed = 600;
-    let playerMoveInterval = null;
+    let playerMoveInterval: ReturnType<typeof setInterval> | null = null;
     let currentDirectionKey = "";
 
     let touchStartX = 0;
     let touchStartY = 0;
     let touchInGameArea = false;
 
+    function getGameElem() {
+        return document.getElementById("game");
+    }
+
+    function makeGrid() {
+        return lineText.repeat(4) + hintRow + lineText.repeat(4);
+    }
+
+    function renderScreen() {
+        const el = getGameElem();
+        if (el) el.textContent = screenRows.join("\n");
+    }
+
+    function renderGame() {
+        const el = getGameElem();
+        if (!el) return;
+        const rows: Array<string> = [];
+        for (let r = 0; r < ROWS; r++) {
+            rows.push(grid.slice(r * COLS, (r + 1) * COLS));
+        }
+        el.textContent = rows.join("\n");
+    }
+
     function setCharAt(str: string, index: number, chr: string) {
         if (index > str.length - 1) return str;
         grid = str.substring(0, index) + chr + str.substring(index + 1);
         return grid;
     }
+
+    // ---------- terminal / boot sequence ----------
+
+    function sleep(ms: number) {
+        return new Promise<void>((resolve) => setTimeout(resolve, ms));
+    }
+
+    function scrollUp() {
+        screenRows.shift();
+        screenRows.push("");
+    }
+
+    function typeLine(text: string, speed = 16) {
+        return new Promise<void>((resolve) => {
+            scrollUp();
+            let i = 0;
+            let blink = true;
+            const timer = setInterval(() => {
+                if (bootCancelled) {
+                    clearInterval(timer);
+                    resolve();
+                    return;
+                }
+                blink = !blink;
+                const cursor = i < text.length ? (blink ? "_" : " ") : "_";
+                screenRows[ROWS - 1] = text.slice(0, i) + cursor;
+                renderScreen();
+                if (i >= text.length) {
+                    clearInterval(timer);
+                    resolve();
+                }
+                i++;
+            }, speed);
+        });
+    }
+
+    function memTest() {
+        return new Promise<void>((resolve) => {
+            scrollUp();
+            let mem = 0;
+            const timer = setInterval(() => {
+                if (bootCancelled) {
+                    clearInterval(timer);
+                    resolve();
+                    return;
+                }
+                mem += 64;
+                screenRows[ROWS - 1] =
+                    "MEMORY " + String(mem).padStart(3, "0") + "K OK";
+                renderScreen();
+                if (mem >= 640) {
+                    clearInterval(timer);
+                    resolve();
+                }
+            }, 45);
+        });
+    }
+
+    async function blankLine(ms: number) {
+        await sleep(ms);
+        if (bootCancelled) return;
+        scrollUp();
+        renderScreen();
+    }
+
+    async function runBoot() {
+        const el = getGameElem();
+        if (!el) return;
+
+        bootCancelled = false;
+        mode = MODE.BOOT;
+        screenRows = new Array(ROWS).fill("");
+        renderScreen();
+        el.style.display = "block";
+        setLedBusy(true);
+
+        const steps: Array<() => Promise<void> | void> = [
+            () => typeLine("SBIOS V1.0"),
+            () => typeLine("(C) 1989 STESOFT"),
+            () => typeLine("BIOS DATE 01/01/89"),
+            () => blankLine(180),
+            () => typeLine("CPU 8088 @4.77MHZ"),
+            () => memTest(),
+            () => typeLine("KEYBOARD.......OK"),
+            () => typeLine("FDD 0: 360KB OK"),
+            () => typeLine("FDD 1: 360KB OK"),
+            () => typeLine("CGA 80X25 OK"),
+            () => typeLine("CMOS..........OK"),
+            () => blankLine(220),
+            () => typeLine("BOOTING S-DOS"),
+            () => typeLine("S-DOS V3.3"),
+            () => sleep(450),
+        ];
+
+        for (const step of steps) {
+            if (bootCancelled || !el.isConnected) return;
+            await step();
+        }
+
+        if (!bootCancelled && el.isConnected) goToMenu();
+    }
+
+    function skipBoot() {
+        if (mode !== MODE.BOOT) return;
+        bootCancelled = true;
+        goToMenu();
+    }
+
+    // ---------- HDD activity LED ----------
+
+    function setLedBusy(busy: boolean) {
+        const led = document.getElementById("hdd-led");
+        if (!led) return;
+        led.classList.toggle("is-busy", busy);
+        if (busy && ledIdleTimer) {
+            clearTimeout(ledIdleTimer);
+            ledIdleTimer = null;
+        }
+    }
+
+    function ledBlip(ms = 90) {
+        const led = document.getElementById("hdd-led");
+        if (!led) return;
+        led.classList.add("is-active");
+        setTimeout(() => led.classList.remove("is-active"), ms);
+    }
+
+    function scheduleLedIdle() {
+        if (ledIdleTimer) clearTimeout(ledIdleTimer);
+        ledIdleTimer = setTimeout(() => {
+            ledBlip(60 + Math.random() * 90);
+            scheduleLedIdle();
+        }, 1500 + Math.random() * 4500);
+    }
+
+    // ---------- app menu ----------
+
+    function center(text: string, width: number) {
+        const pad = Math.max(0, width - text.length);
+        const left = Math.floor(pad / 2);
+        return " ".repeat(left) + text + " ".repeat(pad - left);
+    }
+
+    function menuItem(i: number) {
+        const label = (i === selectedApp ? "> " : "  ") + APPS[i].label;
+        return "│ " + label + " ".repeat(COLS - 4 - label.length) + " │";
+    }
+
+    function renderMenu() {
+        const inner = COLS - 2;
+        screenRows = [
+            "┌" + "─".repeat(inner) + "┐",
+            "│" + center("STEFOS V3.3", inner) + "│",
+            "│" + " ".repeat(inner) + "│",
+            menuItem(0),
+            menuItem(1),
+            menuItem(2),
+            "│" + " ".repeat(inner) + "│",
+            "└" + "─".repeat(inner) + "┘",
+            "^/v MOVE  ENTER GO".padEnd(COLS, " "),
+        ];
+        renderScreen();
+    }
+
+    function goToMenu() {
+        bootCancelled = true;
+        mode = MODE.MENU;
+        selectedApp = 0;
+        renderMenu();
+        setLedBusy(false);
+        ledBlip(140);
+        scheduleLedIdle();
+    }
+
+    function menuMove(dir: number) {
+        if (mode !== MODE.MENU) return;
+        selectedApp = (selectedApp + dir + APPS.length) % APPS.length;
+        renderMenu();
+        ledBlip(45);
+    }
+
+    function menuOpen() {
+        if (mode !== MODE.MENU) return;
+        const app = APPS[selectedApp];
+        ledBlip(120);
+        if (app.id === "snake") startGame();
+        else openInfo(app.id);
+    }
+
+    function openInfo(id: string) {
+        mode = MODE.INFO;
+        const about = [
+            "ABOUT THIS DOS",
+            "----------------",
+            "",
+            "SDOS IS A CUTTING-",
+            "EDGE PERSONAL",
+            "COMPUTER OPERATING",
+            "SYSTEM.",
+            "",
+            "ESC/Q TO RETURN",
+        ];
+        const posts = [
+            "POSTS APP",
+            "----------------",
+            "",
+            "COMING SOON.",
+            "",
+            "STEFAN WRITES",
+            "ABOUT CODE, ETC.",
+            "",
+            "ESC/Q TO RETURN",
+        ];
+        screenRows = (id === "about" ? about : posts).slice(0, ROWS);
+        while (screenRows.length < ROWS) screenRows.push("");
+        renderScreen();
+    }
+
+    // ---------- snake ----------
 
     function updateSnakePosition(pos: number) {
         posArr.push(position);
@@ -235,17 +507,17 @@
     }
 
     function startGame() {
-        const { gameElem, screenText, screenText2 } = getElements();
+        const gameElem = getGameElem();
+        if (!gameElem) return;
 
-        if (playerMoveInterval!) {
+        if (playerMoveInterval) {
             clearInterval(playerMoveInterval);
             playerMoveInterval = null;
         }
 
+        mode = MODE.SNAKE;
         gameStarted = true;
-        screenText!.style.display = "none";
-        screenText2!.style.display = "none";
-        gameElem!.style.display = "block";
+        gameElem.style.display = "block";
         grid = makeGrid();
         posArr = [];
         position = 0;
@@ -260,12 +532,36 @@
         updateFocusEffects();
     }
 
+    function endGame() {
+        if (playerMoveInterval) {
+            clearInterval(playerMoveInterval);
+            playerMoveInterval = null;
+        }
+        gameStarted = false;
+        mode = MODE.INFO;
+        document.getElementById("background")?.classList.remove("playing");
+        updateFocusEffects();
+
+        screenRows = [
+            "",
+            "",
+            center("GAME OVER", COLS),
+            "",
+            center("SCORE " + (snakeLen - 12), COLS),
+            "",
+            "",
+            center("ESC/Q TO RETURN", COLS),
+            "",
+        ];
+        renderScreen();
+    }
+
     function move(key: string, user = true) {
-        if (!gameStarted) return;
+        if (!gameStarted || mode !== MODE.SNAKE) return;
 
         if (currentDirectionKey === key && user) return;
 
-        if (playerMoveInterval!) {
+        if (playerMoveInterval) {
             clearInterval(playerMoveInterval);
         }
 
@@ -273,17 +569,16 @@
 
         handleDirectionKey(key);
 
-        const { gameElem, screenText, screenText2 } = getElements();
         const currSnake = posArr.reverse().slice(0, snakeLen + 1);
 
         currSnake.forEach((pos) => {
-            setCharAt(grid, pos, snake);
+            setCharAt(grid, pos, snakeChar);
         });
         setCharAt(grid, foodPosition, food);
 
         if (foodPosition === position) {
             posArr.push(position);
-            setCharAt(grid, foodPosition, snake);
+            setCharAt(grid, foodPosition, snakeChar);
             snakeLen++;
             snakeSpeed = snakeSpeed / 1.1;
             foodPosition = getNewFoodPos();
@@ -297,27 +592,74 @@
             position !== 0 &&
             currSnake.slice(1).includes(position)
         ) {
-            gameElem!.style.display = "none";
-            screenText!.innerHTML = "YOU LOSE :(";
-            screenText!.style.display = "block";
-            screenText2!.style.display = "block";
-            if (playerMoveInterval!) {
-                clearInterval(playerMoveInterval);
-                playerMoveInterval = null;
-            }
-            gameStarted = false;
-            document.getElementById("background")?.classList.remove("playing");
-            updateFocusEffects();
+            endGame();
         }
     }
 
+    // ---------- input ----------
+
     function keyDownHandler(e: KeyboardEvent) {
-        if (e.key === "g" && !gameStarted) {
-            startGame();
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+        if (mode === MODE.BOOT) {
+            if (
+                [
+                    " ",
+                    "ArrowUp",
+                    "ArrowDown",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "PageUp",
+                    "PageDown",
+                    "Home",
+                    "End",
+                ].includes(e.key)
+            ) {
+                e.preventDefault();
+            }
+            skipBoot();
             return;
         }
-        if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
-            move(e.key);
+
+        if (mode === MODE.MENU) {
+            if (e.key === "ArrowUp" || e.key === "w") {
+                e.preventDefault();
+                menuMove(-1);
+            } else if (e.key === "ArrowDown" || e.key === "s") {
+                e.preventDefault();
+                menuMove(1);
+            } else if (e.key === "Enter" || e.key === "g" || e.key === " ") {
+                e.preventDefault();
+                menuOpen();
+            }
+            return;
+        }
+
+        if (mode === MODE.INFO) {
+            if (["Escape", "q", "Enter", "Backspace", " "].includes(e.key)) {
+                e.preventDefault();
+                goToMenu();
+            }
+            return;
+        }
+
+        if (mode === MODE.SNAKE) {
+            if (e.key === "Escape" || e.key === "q" || e.key === "Backspace") {
+                e.preventDefault();
+                goToMenu();
+                return;
+            }
+            const arrowMap: Record<string, string> = {
+                ArrowUp: "w",
+                ArrowDown: "s",
+                ArrowLeft: "a",
+                ArrowRight: "d",
+            };
+            const key = arrowMap[e.key] ?? e.key;
+            if (["w", "a", "s", "d"].includes(key)) {
+                e.preventDefault();
+                move(key);
+            }
         }
     }
 
@@ -329,7 +671,7 @@
     }
 
     function onTouchMove(e: TouchEvent) {
-        if (gameStarted && touchInGameArea) {
+        if (touchInGameArea && (mode === MODE.SNAKE || mode === MODE.MENU)) {
             e.preventDefault();
         }
     }
@@ -341,20 +683,35 @@
         const dx = touch.clientX - touchStartX;
         const dy = touch.clientY - touchStartY;
         const SWIPE_THRESHOLD = 24;
+        const isTap =
+            Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD;
 
-        if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
-            if (!gameStarted) {
-                startGame();
+        if (mode === MODE.BOOT) {
+            skipBoot();
+            return;
+        }
+
+        if (mode === MODE.INFO) {
+            goToMenu();
+            return;
+        }
+
+        if (mode === MODE.MENU) {
+            if (isTap) {
+                menuOpen();
+            } else if (Math.abs(dy) > Math.abs(dx)) {
+                menuMove(dy > 0 ? 1 : -1);
             }
             return;
         }
 
-        if (!gameStarted) return;
-
-        if (Math.abs(dx) > Math.abs(dy)) {
-            move(dx > 0 ? "d" : "a");
-        } else {
-            move(dy > 0 ? "s" : "w");
+        if (mode === MODE.SNAKE) {
+            if (isTap) return;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                move(dx > 0 ? "d" : "a");
+            } else {
+                move(dy > 0 ? "s" : "w");
+            }
         }
     }
 
@@ -362,11 +719,6 @@
 
     function bindControls() {
         const bg = document.getElementById("background");
-        const prompt = document.getElementById("screentext2");
-
-        if (prompt) {
-            prompt.innerHTML = isTouchDevice ? " tap to play" : " press 'g' to play";
-        }
 
         if (bg && bg !== boundBg) {
             if (boundBg) {
@@ -381,12 +733,6 @@
         }
     }
 
-    window.addEventListener("keydown", keyDownHandler);
-
-    document.addEventListener("astro:page-load", bindControls);
-
-    bindControls();
-
     function updateFocusEffects() {
         if (!isTouchDevice) return;
 
@@ -394,16 +740,11 @@
         if (!scene) return;
 
         const scrolled = window.scrollY > 40;
-        const gameFocused = gameStarted && !scrolled;
+        const gameFocused = mode === MODE.SNAKE && !scrolled;
 
         document.body.classList.toggle("snake-focus", gameFocused);
         scene.classList.toggle("is-scrolled", scrolled);
     }
-
-    window.addEventListener("scroll", updateFocusEffects, { passive: true });
-    document.addEventListener("astro:page-load", updateFocusEffects);
-
-    updateFocusEffects();
 
     function fitScene() {
         const scene = document.querySelector<HTMLElement>(".scene");
@@ -420,8 +761,44 @@
         scene.style.transform = `scale(${scale})`;
     }
 
-    window.addEventListener("resize", fitScene);
-    document.addEventListener("astro:page-load", fitScene);
+    function initOS() {
+        const el = getGameElem();
+        if (!el) return;
 
+        bindControls();
+
+        if (el === bootedEl) return;
+        bootedEl = el;
+        bootCancelled = true;
+        runBoot();
+    }
+
+    window.addEventListener("keydown", keyDownHandler);
+    window.addEventListener("scroll", updateFocusEffects, { passive: true });
+    window.addEventListener("resize", fitScene);
+
+    document.addEventListener("astro:page-load", () => {
+        bindControls();
+        updateFocusEffects();
+        fitScene();
+        initOS();
+    });
+
+    document.addEventListener("astro:before-swap", () => {
+        bootCancelled = true;
+        gameStarted = false;
+        if (playerMoveInterval) {
+            clearInterval(playerMoveInterval);
+            playerMoveInterval = null;
+        }
+        if (ledIdleTimer) {
+            clearTimeout(ledIdleTimer);
+            ledIdleTimer = null;
+        }
+    });
+
+    bindControls();
+    updateFocusEffects();
     fitScene();
+    initOS();
 </script>
