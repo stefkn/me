@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import HeroArt from "../../components/HeroArt.astro";
 import SectionIndicator from "../../components/SectionIndicator.astro";
+import AiAssistedBadge from "../../components/AiAssistedBadge.astro";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("posts");
@@ -48,6 +49,11 @@ const pubDate = entry.data.pubDate;
     <ul class="tags">
       {entry.data.tags.map((tag) => <li class="tag">{tag}</li>)}
     </ul>
+    {entry.data["ai-assisted"] && (
+      <div class="ai-row">
+        <AiAssistedBadge position="below" />
+      </div>
+    )}
   </header>
 
   <div id="article-content">
@@ -144,6 +150,12 @@ const pubDate = entry.data.pubDate;
     border: 1px solid rgb(255 255 255 / 0.4);
     color: rgb(255 255 255 / 0.9);
     background: rgb(255 255 255 / 0.12);
+  }
+
+  .article-header .ai-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.1rem;
   }
 
   #article-content {
