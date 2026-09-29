@@ -1,0 +1,1 @@
+import{i as n,a as t}from"./animate.es.m7EQ-Gx0.js";function a(){n(".reveal",e=>{t(e.target,{opacity:1,transform:"none"},{delay:.1,duration:.8,easing:[.17,.55,.55,1]})})}document.addEventListener("astro:page-load",()=>{a()});a();
