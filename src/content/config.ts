@@ -15,7 +15,8 @@ const postsCollection = defineCollection({
     hue: z.number().optional(),
     seed: z.number().optional(),
     tags: z.array(z.string()),
-    featured: z.boolean()
+    featured: z.boolean(),
+    "ai-assisted": z.boolean().optional().default(false)
   })
 });
 const journalsCollection = defineCollection({
