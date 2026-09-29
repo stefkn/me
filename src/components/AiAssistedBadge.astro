@@ -1,0 +1,255 @@
+---
+interface Props {
+  variant?: "on-image" | "on-light";
+  position?: "above" | "below";
+}
+
+const { variant = "on-image", position = "above" } = Astro.props;
+const tooltipId = `ai-tooltip-${Math.random().toString(36).slice(2, 9)}`;
+const tooltipText =
+  "LLMs were used in drafting or editing this article. Ideas, fact-checking and the final wording were reviewed by the author.";
+---
+
+<span
+  class={`ai-badge ai-badge--${variant}`}
+  data-position={position}
+>
+  <button
+    type="button"
+    class="ai-badge-trigger"
+    aria-expanded="false"
+    aria-describedby={tooltipId}
+  >
+    <svg
+      class="ai-badge-icon"
+      width="11"
+      height="11"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z"
+        fill="currentColor"
+      />
+      <path
+        d="M19 15l.9 2.6L22.5 18.5l-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9L19 15z"
+        fill="currentColor"
+        opacity="0.7"
+      />
+    </svg>
+    <span class="ai-badge-label">AI-assisted</span>
+  </button>
+  <span role="tooltip" id={tooltipId} class="ai-tooltip">{tooltipText}</span>
+</span>
+
+<script>
+  function initAiBadges() {
+    const badges = document.querySelectorAll(".ai-badge");
+    badges.forEach((badge) => {
+      if ((badge as HTMLElement).dataset.aiBound === "true") return;
+      (badge as HTMLElement).dataset.aiBound = "true";
+      const trigger = badge.querySelector(".ai-badge-trigger");
+      if (!trigger) return;
+
+      trigger.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = badge.classList.contains("is-open");
+        // Close any other open badges
+        document.querySelectorAll(".ai-badge.is-open").forEach((other) => {
+          other.classList.remove("is-open");
+          other.querySelector(".ai-badge-trigger")?.setAttribute("aria-expanded", "false");
+        });
+        if (!isOpen) {
+          badge.classList.add("is-open");
+          trigger.setAttribute("aria-expanded", "true");
+        } else {
+          badge.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      // Close on Escape
+      trigger.addEventListener("keydown", (e) => {
+        if ((e as KeyboardEvent).key === "Escape") {
+          badge.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+          (trigger as HTMLElement).blur();
+        }
+      });
+    });
+
+    if (!(document as any).aiBadgeOutsideBound) {
+      (document as any).aiBadgeOutsideBound = true;
+      document.addEventListener("click", (e) => {
+        document.querySelectorAll(".ai-badge.is-open").forEach((open) => {
+          if (!open.contains(e.target as Node)) {
+            open.classList.remove("is-open");
+            open.querySelector(".ai-badge-trigger")?.setAttribute("aria-expanded", "false");
+          }
+        });
+      });
+      document.addEventListener("keydown", (e) => {
+        if ((e as KeyboardEvent).key === "Escape") {
+          document.querySelectorAll(".ai-badge.is-open").forEach((open) => {
+            open.classList.remove("is-open");
+            open.querySelector(".ai-badge-trigger")?.setAttribute("aria-expanded", "false");
+          });
+        }
+      });
+    }
+  }
+
+  document.addEventListener("astro:page-load", initAiBadges);
+  initAiBadges();
+</script>
+
+<style>
+  .ai-badge {
+    position: relative;
+    display: inline-flex;
+    z-index: 3;
+  }
+
+  .ai-badge-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .ai-badge--on-image .ai-badge-trigger {
+    border: 1px solid rgb(255 255 255 / 0.45);
+    color: rgb(255 255 255 / 0.9);
+    background: rgb(255 255 255 / 0.14);
+  }
+
+  .ai-badge--on-image .ai-badge-trigger:hover,
+  .ai-badge--on-image .ai-badge-trigger:focus-visible,
+  .ai-badge--on-image.ai-badge.is-open .ai-badge-trigger {
+    background: rgb(255 255 255 / 0.28);
+    border-color: rgb(255 255 255 / 0.7);
+    color: #fff;
+    outline: none;
+  }
+
+  .ai-badge--on-light .ai-badge-trigger {
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    background: transparent;
+  }
+
+  .ai-badge--on-light .ai-badge-trigger:hover,
+  .ai-badge--on-light .ai-badge-trigger:focus-visible,
+  .ai-badge--on-light.ai-badge.is-open .ai-badge-trigger {
+    border-color: var(--color-accent-strong);
+    color: var(--color-accent-strong);
+    outline: none;
+  }
+
+  .ai-badge-icon {
+    flex-shrink: 0;
+  }
+
+  .ai-badge-label {
+    line-height: 1.4;
+  }
+
+  .ai-tooltip {
+    position: absolute;
+    left: 50%;
+    width: max-content;
+    max-width: 16rem;
+    min-width: 12rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 8px 32px rgb(0 0 0 / 0.22);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: var(--text-xs);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-transform: none;
+    text-align: left;
+    white-space: normal;
+    z-index: 20;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.18s ease,
+      visibility 0.18s ease,
+      transform 0.18s ease;
+  }
+
+  .ai-badge[data-position="above"] .ai-tooltip {
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%) translateY(4px);
+  }
+
+  .ai-badge[data-position="below"] .ai-tooltip {
+    top: calc(100% + 10px);
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  .ai-badge:hover .ai-tooltip,
+  .ai-badge:focus-within .ai-tooltip,
+  .ai-badge.is-open .ai-tooltip {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .ai-badge[data-position="above"]:hover .ai-tooltip,
+  .ai-badge[data-position="above"]:focus-within .ai-tooltip,
+  .ai-badge[data-position="above"].is-open .ai-tooltip {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .ai-badge[data-position="below"]:hover .ai-tooltip,
+  .ai-badge[data-position="below"]:focus-within .ai-tooltip,
+  .ai-badge[data-position="below"].is-open .ai-tooltip {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Arrow */
+  .ai-tooltip::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+  }
+
+  .ai-badge[data-position="above"] .ai-tooltip::after {
+    top: 100%;
+    border-top-color: var(--color-border);
+  }
+
+  .ai-badge[data-position="below"] .ai-tooltip::after {
+    bottom: 100%;
+    border-bottom-color: var(--color-border);
+  }
+
+  @media (max-width: 620px) {
+    .ai-tooltip {
+      max-width: min(15rem, calc(100vw - 3rem));
+      min-width: 0;
+    }
+  }
+</style>
